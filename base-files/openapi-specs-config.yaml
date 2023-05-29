@@ -1,0 +1,14 @@
+# OpenAPI specifications (see https://swagger.io/specification/)
+openapi: 3.0.3
+info:
+  title: Alliage REST API
+  description: Describe what your API does here...
+  contact:
+    name: API Support
+    url: http://www.example.com/support
+    email: support@example.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+paths: {}

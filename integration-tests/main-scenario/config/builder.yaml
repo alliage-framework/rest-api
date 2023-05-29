@@ -1,0 +1,4 @@
+tasks:
+  - name: rest-generate-schema
+    description: Generate schema
+    params: {}
