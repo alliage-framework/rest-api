@@ -19,7 +19,6 @@
   "license": "MIT",
   "scripts": {
     "download-openapi-schema": "sh scripts/download-openapi-schema.sh",
-    "postinstall": "yarn download-openapi-schema",
     "lint": "eslint . --ext .ts",
     "test:unit": "__ALLIAGE_REST_API_MODULE_PATH__=\"$PWD/src\" NODE_ENV=test jest --maxWorkers=2 --rootDir=. -c jest.config.js --coverage",
     "test:integration": "NODE_ENV=test jest --maxWorkers=2 --rootDir=. -c ./integration-tests/jest.config.js",
