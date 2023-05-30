@@ -16,7 +16,9 @@ jobs:
         with:
           cache: 'yarn'
       - name: Install dependencies
-        run: yarn
+        run: |
+          yarn
+          yarn download-openapi-schema
       - name: Build
         run: yarn build
       - name: Run tests
