@@ -1,0 +1,20 @@
+schema:
+  enable: true
+  path: /api/specs
+metadata:
+  sources: ["src/controllers/*"]
+  path: ".alliage-rest-api-metadata.json"
+validation:
+  requests:
+    # Enables automatic validation of the requests
+    enable: true
+  responses:
+    # Enables automatic valiation of the responses
+    enable: true
+    errors:
+      # Doesn't return an error if the response is invalid
+      returnErrors: false
+      statusCode: 500
+development:
+  # Disables automatic metadata generation when in development mode
+  disableMetadataGeneration: false

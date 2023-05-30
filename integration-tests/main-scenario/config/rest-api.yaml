@@ -1,0 +1,21 @@
+schema:
+  enable: true
+  path: /api/specs
+metadata:
+  sources: ["src/controllers/*"]
+  path: ".alliage-rest-api-metadata.json"
+validation:
+  requests:
+    enable: true
+  responses:
+    enable: true
+    errors:
+      returnErrors: false
+      statusCode: 500
+allowedOrigins:
+  - origin: "http://acme.com"
+    headers: ["X-Custom-Header-1", "X-Custom-Header-2"]
+    methods: ["GET", "POST", "PUT", "DELETE"]
+    maxAge: 4800
+development:
+  disableMetadataGeneration: false

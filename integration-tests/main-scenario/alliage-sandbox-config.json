@@ -1,0 +1,23 @@
+{
+  "command": "ts-node -P <projectRoot>/tsconfig.json",
+  "copyFiles": [
+    "<scenarioRoot>/src",
+    "<scenarioRoot>/config",
+    "<projectRoot>/tsconfig.json"
+  ],
+  "linkModules": {
+    "@alliage/rest-api": "<projectRoot>"
+  },
+  "alliageModules": [
+    "@alliage/module-installer",
+    "@alliage/lifecycle",
+    "@alliage/di",
+    "@alliage/config-loader",
+    "@alliage/service-loader",
+    "@alliage/process-manager",
+    "@alliage/builder",
+    "@alliage/webserver",
+    "@alliage/webserver-express",
+    "@alliage/rest-api"
+  ]
+}

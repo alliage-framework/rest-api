@@ -1,2 +1,1 @@
-# rest-api
-Alliage module to easily build REST APIs
+alliage-rest-api
