@@ -31,7 +31,7 @@ export class Validator {
   private ajv: Ajv;
 
   constructor() {
-    this.ajv = new Ajv({ coerceTypes: true, allErrors: true });
+    this.ajv = new Ajv({ coerceTypes: true, allErrors: true, logger: false });
     addFormats(this.ajv);
   }
 
