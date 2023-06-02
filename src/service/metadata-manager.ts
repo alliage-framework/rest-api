@@ -2,7 +2,7 @@ import path from "path";
 import fs from "fs/promises";
 
 import { parse } from "comment-parser";
-import { pathToRegexp } from "path-to-regexp";
+import { pathToRegexp, parse as parsePath } from "path-to-regexp";
 import {
   ClassDeclaration,
   Decorator,
@@ -88,7 +88,14 @@ export class MetadataManager {
           m[route.method] = m[route.method] ?? [];
           m[route.method].push({
             pattern: pathToRegexp(route.path).toString(),
-            path: route.path,
+            path: parsePath(route.path)
+              .map((token) => {
+                if (typeof token === "string") {
+                  return token;
+                }
+                return `${token.prefix}{${token.name}}${token.suffix}`;
+              })
+              .join(""),
             actionMetadata: {
               controllerName: cm.name,
               ...action,
