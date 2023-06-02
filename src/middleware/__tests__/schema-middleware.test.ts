@@ -95,24 +95,32 @@ describe("middleware/schema-middleware", () => {
           paths: {
             "/api/check-age": {
               post: {
-                parameters: {
-                  country: {
+                parameters: [
+                  {
+                    name: "country",
                     in: "query",
                     required: true,
                     schema: {
                       type: "string",
                     },
                   },
-                },
+                ],
                 requestBody: {
-                  additionalProperties: false,
-                  properties: {
-                    age: {
-                      type: "number",
+                  content: {
+                    ["application/json"]: {
+                      schema: {
+                        additionalProperties: false,
+                        properties: {
+                          age: {
+                            type: "number",
+                          },
+                        },
+                        required: ["age"],
+                        type: "object",
+                      },
                     },
                   },
-                  required: ["age"],
-                  type: "object",
+                  required: true,
                 },
                 responses: {
                   "200": {
@@ -130,6 +138,7 @@ describe("middleware/schema-middleware", () => {
                         },
                       },
                     },
+                    description: "Success response",
                   },
                   "400": {
                     content: {
@@ -154,18 +163,11 @@ describe("middleware/schema-middleware", () => {
                 },
               },
             },
-            "/api/hello/:name": {
+            "/api/hello/{name}": {
               get: {
-                parameters: {
-                  language: {
-                    in: "query",
-                    required: false,
-                    schema: {
-                      enum: ["fr", "en"],
-                      type: "string",
-                    },
-                  },
-                  name: {
+                parameters: [
+                  {
+                    name: "name",
                     in: "path",
                     required: true,
                     schema: {
@@ -173,8 +175,17 @@ describe("middleware/schema-middleware", () => {
                       type: "string",
                     },
                   },
-                },
-                requestBody: {},
+                  {
+                    name: "language",
+                    in: "query",
+                    required: false,
+                    schema: {
+                      enum: ["fr", "en"],
+                      type: "string",
+                    },
+                  },
+                ],
+                requestBody: undefined,
                 responses: {
                   "200": {
                     content: {
@@ -191,6 +202,7 @@ describe("middleware/schema-middleware", () => {
                         },
                       },
                     },
+                    description: "Success response",
                   },
                   "400": {
                     content: {
@@ -330,7 +342,7 @@ describe("middleware/schema-middleware", () => {
                       validateInput: true,
                       validateOutput: true,
                     },
-                    path: "/api/hello/:name",
+                    path: "/api/hello/{name}",
                     pattern:
                       "/^\\/api\\/hello(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$/i",
                   },
@@ -473,8 +485,8 @@ describe("middleware/schema-middleware", () => {
                 paths: {
                   "/api/x/y": {
                     get: {
-                      parameters: {},
-                      requestBody: {},
+                      parameters: [],
+                      requestBody: undefined,
                       responses: {
                         "200": {
                           content: {
@@ -491,6 +503,7 @@ describe("middleware/schema-middleware", () => {
                               },
                             },
                           },
+                          description: "Success response",
                         },
                       },
                     },
@@ -520,8 +533,8 @@ describe("middleware/schema-middleware", () => {
             paths: {
               "/api/x/y": {
                 get: {
-                  parameters: {},
-                  requestBody: {},
+                  parameters: [],
+                  requestBody: undefined,
                   responses: {
                     "200": {
                       content: {
@@ -538,6 +551,7 @@ describe("middleware/schema-middleware", () => {
                           },
                         },
                       },
+                      description: "Success response",
                     },
                   },
                 },

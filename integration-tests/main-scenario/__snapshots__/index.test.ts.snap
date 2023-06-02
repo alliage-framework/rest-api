@@ -18,11 +18,21 @@ Object {
   },
   "openapi": "3.0.3",
   "paths": Object {
-    "/api/hello/:name": Object {
+    "/api/hello/{name}": Object {
       "post": Object {
-        "parameters": Object {
-          "language": Object {
+        "parameters": Array [
+          Object {
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": Object {
+              "pattern": "[a-zA-Z]+",
+              "type": "string",
+            },
+          },
+          Object {
             "in": "query",
+            "name": "language",
             "required": false,
             "schema": Object {
               "enum": Array [
@@ -32,26 +42,25 @@ Object {
               "type": "string",
             },
           },
-          "name": Object {
-            "in": "path",
-            "required": true,
-            "schema": Object {
-              "pattern": "[a-zA-Z]+",
-              "type": "string",
-            },
-          },
-        },
+        ],
         "requestBody": Object {
-          "additionalProperties": false,
-          "properties": Object {
-            "age": Object {
-              "type": "number",
+          "content": Object {
+            "application/json": Object {
+              "schema": Object {
+                "additionalProperties": false,
+                "properties": Object {
+                  "age": Object {
+                    "type": "number",
+                  },
+                },
+                "required": Array [
+                  "age",
+                ],
+                "type": "object",
+              },
             },
           },
-          "required": Array [
-            "age",
-          ],
-          "type": "object",
+          "required": true,
         },
         "responses": Object {
           "200": Object {
@@ -71,6 +80,7 @@ Object {
                 },
               },
             },
+            "description": "Success response",
           },
         },
       },
@@ -141,7 +151,7 @@ Object {
         "validateInput": true,
         "validateOutput": true,
       },
-      "path": "/api/hello/:name",
+      "path": "/api/hello/{name}",
       "pattern": "/^\\\\/api\\\\/hello(?:\\\\/([^\\\\/#\\\\?]+?))[\\\\/#\\\\?]?$/i",
     },
   ],
@@ -210,7 +220,7 @@ Object {
         "validateInput": true,
         "validateOutput": true,
       },
-      "path": "/api/hello/:name",
+      "path": "/api/hello/{name}",
       "pattern": "/^\\\\/api\\\\/hello(?:\\\\/([^\\\\/#\\\\?]+?))[\\\\/#\\\\?]?$/i",
     },
   ],

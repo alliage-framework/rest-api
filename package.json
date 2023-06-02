@@ -51,13 +51,14 @@
     }
   },
   "devDependencies": {
-    "@alliage/core": "^0.1.0-beta.1",
-    "@alliage/framework": "^1.0.0-beta.1",
+    "@alliage/core": "^0.1.0-beta.3",
+    "@alliage/framework": "^1.0.0-beta.3",
     "@alliage/sandbox": "^1.0.0-beta.2",
     "@alliage/webserver": "^0.1.0-beta.0",
     "@alliage/webserver-express": "^0.1.0-beta.0",
     "@alliage/webserver-sandbox": "^0.1.0-beta.0",
     "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
     "@types/jest": "^27.4.1",
     "@types/js-yaml": "^4.0.5",
     "@types/lodash.clonedeep": "^4.5.7",

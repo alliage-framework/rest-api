@@ -52,37 +52,38 @@ export class SchemaMiddleware extends AbstractMiddleware {
             [path]: {
               ...(p as Record<string, object>)[path],
               [method.toLowerCase()]: {
-                parameters: {
-                  ...Object.entries(params.properties ?? {}).reduce(
-                    (acc, [name, schema]) => {
-                      return {
-                        ...acc,
-                        [name]: {
-                          schema,
-                          in: "path",
-                          required: true,
-                        },
-                      };
-                    },
-                    {}
+                parameters: [
+                  ...Object.entries(params.properties ?? {}).map(
+                    ([name, schema]) => ({
+                      name,
+                      schema,
+                      in: "path",
+                      required: true,
+                    })
                   ),
-                  ...Object.entries(query.properties ?? {}).reduce(
-                    (acc, [name, schema]) => {
-                      return {
-                        ...acc,
-                        [name]: {
-                          schema,
-                          in: "query",
-                          required: query.required?.includes(name) ?? false,
-                        },
-                      };
-                    },
-                    {}
+                  ...Object.entries(query.properties ?? {}).map(
+                    ([name, schema]) => ({
+                      name,
+                      schema,
+                      in: "query",
+                      required: query.required?.includes(name) ?? false,
+                    })
                   ),
-                },
-                requestBody: actionMetadata.bodyType,
+                ],
+                requestBody:
+                  Object.entries(actionMetadata.bodyType).length > 0
+                    ? {
+                        required: true,
+                        content: {
+                          ["application/json"]: {
+                            schema: actionMetadata.bodyType,
+                          },
+                        },
+                      }
+                    : undefined,
                 responses: {
                   [actionMetadata.defaultStatusCode]: {
+                    description: "Success response",
                     content: {
                       ["application/json"]: {
                         schema: actionMetadata.returnType,
