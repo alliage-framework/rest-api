@@ -297,6 +297,23 @@ describe("utils/json-schema", () => {
         });
       });
 
+      it("should return schema for a Date object", () => {
+        const { type, fileData } = getTypeAndFileData("ObjectWithDate");
+
+        expect(convertTypeToJsonSchema(type, fileData)).toEqual({
+          additionalProperties: false,
+          properties: {
+            date: {
+              pattern:
+                "^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2}):(\\d{2}(?:\\.\\d*)?)((-(\\d{2}):(\\d{2})|Z)?)$",
+              type: "string",
+            },
+          },
+          required: ["date"],
+          type: "object",
+        });
+      });
+
       it("should fail silently when metadata is not valid JSON", () => {
         const { type, fileData } = getTypeAndFileData(
           "ObjectTypeWithInvalidMetadata"

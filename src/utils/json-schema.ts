@@ -5,6 +5,9 @@ import {
 } from "json-schema";
 import { Symbol as TSSymbol, Type, ts } from "ts-morph";
 
+const DATETIME_PATTERN =
+  "^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2}):(\\d{2}(?:\\.\\d*)?)((-(\\d{2}):(\\d{2})|Z)?)$";
+
 interface JSDocProperties {
   description?: string;
   ignore?: boolean;
@@ -166,6 +169,13 @@ function convertObjectTypeToJsonSchema(
   visitedTypes: { type: Type<ts.Type>; path: string[] }[],
   fileData: FileData
 ): JSONSchema6Definition {
+  if (t.getSymbolOrThrow().getEscapedName() === "Date") {
+    return {
+      type: "string",
+      pattern: DATETIME_PATTERN,
+    };
+  }
+
   // If the type has been already visited then we're in a recursion
   // so we simply make a ref to that type
   const visitedType = visitedTypes.find((vt) => vt.type === t);
@@ -183,6 +193,7 @@ function convertObjectTypeToJsonSchema(
     },
   ];
 
+  t.getSymbolOrThrow().getDeclarations()[0];
   const required: string[] = [];
   const properties = t
     .getProperties()
@@ -193,7 +204,9 @@ function convertObjectTypeToJsonSchema(
       }
 
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      let type = property.getDeclarations()[0]!.getType();
+      let type = property.getTypeAtLocation(
+        t.getSymbolOrThrow().getDeclarations()[0]
+      );
       if (type.isNullable()) {
         type = type.getNonNullableType();
       } else {
