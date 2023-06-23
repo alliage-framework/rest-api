@@ -94,6 +94,10 @@ type ObjectWithRecursion = {
   recursiveProperty: Item;
 };
 
+type ObjectWithDate = {
+  date: Date;
+};
+
 type UnionType = number | string | boolean | ObjectType;
 
 type StringUnionType = "foo" | "bar" | "baz";
