@@ -1,3 +1,10 @@
+# [1.0.0-beta.6](https://github.com/alliage-framework/rest-api/compare/v1.0.0-beta.5...v1.0.0-beta.6) (2023-06-26)
+
+
+### Bug Fixes
+
+* handle unknown source file in json schema conversion ([#6](https://github.com/alliage-framework/rest-api/issues/6)) ([e7a5c12](https://github.com/alliage-framework/rest-api/commit/e7a5c120db76cc2c9146765e5e9cdc29bf1f41a6))
+
 # [1.0.0-beta.5](https://github.com/alliage-framework/rest-api/compare/v1.0.0-beta.4...v1.0.0-beta.5) (2023-06-23)
 
 
