@@ -33,12 +33,22 @@ interface FileData {
 }
 
 export function getFileData(symbol: TSSymbol): FileData {
-  const node = symbol.getDeclarations()[0];
-  const file = node.getSourceFile();
-  return {
-    filepath: file.getFilePath(),
-    position: file.getLineAndColumnAtPos(node.getPos()),
-  };
+  try {
+    const node = symbol.getDeclarations()[0];
+    const file = node.getSourceFile();
+    return {
+      filepath: file.getFilePath(),
+      position: file.getLineAndColumnAtPos(node.getPos()),
+    };
+  } catch (e) /* istanbul ignore next */ {
+    return {
+      filepath: "unknown",
+      position: {
+        line: 0,
+        column: 0,
+      },
+    };
+  }
 }
 
 function tryOrReturn<FuncReturn, FallbackReturn>(
