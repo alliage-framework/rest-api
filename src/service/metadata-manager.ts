@@ -13,10 +13,15 @@ import {
   Project,
   SourceFile,
   SyntaxKind,
+  Type,
   ts,
 } from "ts-morph";
 
-import { convertTypeToJsonSchema, getFileData } from "../utils/json-schema";
+import {
+  FileData,
+  convertTypeToJsonSchema,
+  getFileData,
+} from "../utils/json-schema";
 
 const PATTERN_REGEXP = /^\/(.*)\/([dgimsuy]+)$/;
 
@@ -311,6 +316,19 @@ function getActionErrorsMetadata(
     });
 }
 
+function getStringJsonDocTag(methodDecl: MethodDeclaration, tagName: string) {
+  const tags = methodDecl.getSymbolOrThrow().getJsDocTags();
+  const scTag = tags.find((t) => t.getName() === tagName);
+
+  if (scTag) {
+    return scTag
+      .getText()
+      .map((t) => t.text)
+      .join("");
+  }
+  return undefined;
+}
+
 function getActionDefaultStatusCode(methodDecl: MethodDeclaration) {
   const tags = methodDecl.getSymbolOrThrow().getJsDocTags();
   const scTag = tags.find((t) => t.getName() === "defaultStatusCode");
@@ -351,6 +369,15 @@ function getActionValidateOutputFlag(methodDecl: MethodDeclaration) {
     .join("") === "false"
     ? false
     : true;
+}
+
+function getReturnSchemaFromType(type: Type<ts.Type>, fileData: FileData) {
+  const actualType =
+    type.getSymbol()?.getName() === "Promise"
+      ? type.getTypeArguments()[0]
+      : type;
+  const schema = convertTypeToJsonSchema(actualType, fileData);
+  return schema;
 }
 
 export function getControllerMetadata(file: SourceFile) {
@@ -401,10 +428,14 @@ export function getControllerMetadata(file: SourceFile) {
     const defaultStatusCode = getActionDefaultStatusCode(methodDecl);
     const validateInput = getActionValidateInputFlag(methodDecl);
     const validateOutput = getActionValidateOutputFlag(methodDecl);
+    const description = getStringJsonDocTag(methodDecl, "description");
+    const returnDescription = getStringJsonDocTag(methodDecl, "returns");
 
     return [
       {
         name: methodDecl.getName(),
+        description,
+        returnDescription,
         defaultStatusCode,
         validateInput,
         validateOutput,
@@ -427,13 +458,10 @@ export function getControllerMetadata(file: SourceFile) {
               getFileData(paramDeclaration.getSymbolOrThrow())
             )
           : {},
-        returnType:
-          returnType.getSymbolOrThrow().getName() === "Promise"
-            ? convertTypeToJsonSchema(
-                methodDecl.getReturnType().getTypeArguments()[0],
-                getFileData(methodDecl.getSymbolOrThrow())
-              )
-            : {},
+        returnType: getReturnSchemaFromType(
+          returnType,
+          getFileData(methodDecl.getSymbolOrThrow())
+        ),
         errors: errors.map(({ payloadType, ...e }) => ({
           ...e,
           payloadType: convertTypeToJsonSchema(

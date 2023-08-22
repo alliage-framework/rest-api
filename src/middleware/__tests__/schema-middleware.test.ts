@@ -95,6 +95,7 @@ describe("middleware/schema-middleware", () => {
           paths: {
             "/api/check-age": {
               post: {
+                description: "Test1 Controller description",
                 parameters: [
                   {
                     name: "country",
@@ -138,7 +139,7 @@ describe("middleware/schema-middleware", () => {
                         },
                       },
                     },
-                    description: "Success response",
+                    description: "Test1 Controller return description",
                   },
                   "400": {
                     content: {
@@ -165,6 +166,7 @@ describe("middleware/schema-middleware", () => {
             },
             "/api/hello/{name}": {
               get: {
+                description: "Test2 Controller description",
                 parameters: [
                   {
                     name: "name",
@@ -202,7 +204,7 @@ describe("middleware/schema-middleware", () => {
                         },
                       },
                     },
-                    description: "Success response",
+                    description: "Test2 Controller return description",
                   },
                   "400": {
                     content: {
@@ -221,6 +223,55 @@ describe("middleware/schema-middleware", () => {
                     },
                     description:
                       "Error raised when the user requested French language",
+                  },
+                },
+              },
+            },
+            "/api/hierarchy": {
+              post: {
+                description: undefined,
+                parameters: [],
+                requestBody: {
+                  content: {
+                    "application/json": {
+                      schema: {
+                        additionalProperties: false,
+                        properties: {
+                          employees: {
+                            items: {
+                              additionalProperties: false,
+                              properties: {
+                                directReports: {
+                                  items: {
+                                    $ref: "#/paths/~1api~1hierarchy/post/requestBody/content/application~1json/schema/properties/employees/items",
+                                  },
+                                  type: "array",
+                                },
+                                name: {
+                                  type: "string",
+                                },
+                              },
+                              required: ["name", "directReports"],
+                              type: "object",
+                            },
+                            type: "array",
+                          },
+                        },
+                        required: ["employees"],
+                        type: "object",
+                      },
+                    },
+                  },
+                  required: true,
+                },
+                responses: {
+                  "204": {
+                    content: undefined,
+                    description: "Success response",
+                  },
+                  "401": {
+                    content: undefined,
+                    description: "401 Error",
                   },
                 },
               },
@@ -290,6 +341,8 @@ describe("middleware/schema-middleware", () => {
                       bodyType: {},
                       controllerName: "Test2Controller",
                       defaultStatusCode: 200,
+                      description: "Test2 Controller description",
+                      returnDescription: "Test2 Controller return description",
                       errors: [
                         {
                           code: "400",
@@ -362,6 +415,8 @@ describe("middleware/schema-middleware", () => {
                       },
                       controllerName: "Test1Controller",
                       defaultStatusCode: 200,
+                      description: "Test1 Controller description",
+                      returnDescription: "Test1 Controller return description",
                       errors: [
                         {
                           code: "400",
@@ -410,6 +465,60 @@ describe("middleware/schema-middleware", () => {
                     path: "/api/check-age",
                     pattern: "/^\\/api\\/check-age[\\/#\\?]?$/i",
                   },
+                  {
+                    actionMetadata: {
+                      bodyType: {
+                        additionalProperties: false,
+                        properties: {
+                          employees: {
+                            items: {
+                              additionalProperties: false,
+                              properties: {
+                                directReports: {
+                                  items: {
+                                    $ref: "#/properties/employees/items",
+                                  },
+                                  type: "array",
+                                },
+                                name: {
+                                  type: "string",
+                                },
+                              },
+                              required: ["name", "directReports"],
+                              type: "object",
+                            },
+                            type: "array",
+                          },
+                        },
+                        required: ["employees"],
+                        type: "object",
+                      },
+                      controllerName: "Test3Controller",
+                      defaultStatusCode: 204,
+                      errors: [
+                        {
+                          code: "401",
+                          payloadType: {
+                            type: "null",
+                          },
+                        },
+                      ],
+                      name: "sayHello",
+                      paramsType: {
+                        type: "null",
+                      },
+                      queryType: {
+                        type: "null",
+                      },
+                      returnType: {
+                        type: "null",
+                      },
+                      validateInput: true,
+                      validateOutput: true,
+                    },
+                    path: "/api/hierarchy",
+                    pattern: "/^\\/api\\/hierarchy[\\/#\\?]?$/i",
+                  },
                 ],
               });
               event.setMetadata({
@@ -435,6 +544,8 @@ describe("middleware/schema-middleware", () => {
                       },
                       validateInput: true,
                       validateOutput: true,
+                      description: "TestX Controller description",
+                      returnDescription: "TestX Controller return description",
                     },
                     path: "/api/x/y",
                     pattern: "/^\\/api\\/x\\/y$/i",
@@ -454,6 +565,8 @@ describe("middleware/schema-middleware", () => {
                       bodyType: {},
                       controllerName: "TestXController",
                       defaultStatusCode: 200,
+                      description: "TestX Controller description",
+                      returnDescription: "TestX Controller return description",
                       errors: [],
                       name: "actionY",
                       paramsType: {},
@@ -485,6 +598,7 @@ describe("middleware/schema-middleware", () => {
                 paths: {
                   "/api/x/y": {
                     get: {
+                      description: "TestX Controller description",
                       parameters: [],
                       requestBody: undefined,
                       responses: {
@@ -503,7 +617,7 @@ describe("middleware/schema-middleware", () => {
                               },
                             },
                           },
-                          description: "Success response",
+                          description: "TestX Controller return description",
                         },
                       },
                     },
@@ -533,6 +647,7 @@ describe("middleware/schema-middleware", () => {
             paths: {
               "/api/x/y": {
                 get: {
+                  description: "TestX Controller description",
                   parameters: [],
                   requestBody: undefined,
                   responses: {
@@ -551,7 +666,7 @@ describe("middleware/schema-middleware", () => {
                           },
                         },
                       },
-                      description: "Success response",
+                      description: "TestX Controller return description",
                     },
                   },
                 },

@@ -9,6 +9,8 @@ import { Config as OpenApiSpecs } from "../config/openapi-specs";
 import { Config } from "../config/main";
 import { MetadataManager } from "../service/metadata-manager";
 
+const REF_REGEXP = /^#(\/.*)$/;
+
 /**
  * Exposes the OpenAPI schema endpoint
  */
@@ -52,6 +54,7 @@ export class SchemaMiddleware extends AbstractMiddleware {
             [path]: {
               ...(p as Record<string, object>)[path],
               [method.toLowerCase()]: {
+                description: actionMetadata.description,
                 parameters: [
                   ...Object.entries(params.properties ?? {}).map(
                     ([name, schema]) => ({
@@ -83,23 +86,31 @@ export class SchemaMiddleware extends AbstractMiddleware {
                     : undefined,
                 responses: {
                   [actionMetadata.defaultStatusCode]: {
-                    description: "Success response",
-                    content: {
-                      ["application/json"]: {
-                        schema: actionMetadata.returnType,
-                      },
-                    },
+                    description:
+                      actionMetadata.returnDescription ?? "Success response",
+                    content:
+                      actionMetadata.returnType &&
+                      actionMetadata.returnType.type !== "null"
+                        ? {
+                            ["application/json"]: {
+                              schema: actionMetadata.returnType,
+                            },
+                          }
+                        : undefined,
                   },
                   ...actionMetadata.errors.reduce((responses, error) => {
                     return {
                       ...responses,
                       [error.code]: {
-                        description: error.description,
-                        content: {
-                          ["application/json"]: {
-                            schema: error.payloadType,
-                          },
-                        },
+                        description: error.description ?? `${error.code} Error`,
+                        content:
+                          error.payloadType && error.payloadType.type !== "null"
+                            ? {
+                                ["application/json"]: {
+                                  schema: error.payloadType,
+                                },
+                              }
+                            : undefined,
                       },
                     };
                   }, {}),
@@ -112,13 +123,13 @@ export class SchemaMiddleware extends AbstractMiddleware {
       {}
     );
 
-    this.schema = {
+    this.schema = this._resolveRefs({
       ...this.openApiSpecs,
       paths: {
         ...paths,
         ...(this.openApiSpecs.paths as object),
       },
-    };
+    }) as OpenApiSpecs;
 
     const postEvent = new RestAPIPostGenerateSchemaEvent(metadata, this.schema);
     await this.eventManager.emit(postEvent.getType(), postEvent);
@@ -132,5 +143,32 @@ export class SchemaMiddleware extends AbstractMiddleware {
       const schema = await this.generateSchema();
       context.getResponse().setStatus(200).setBody(schema).end();
     }
+  }
+
+  private _resolveRefs(schema: unknown, path: string[] = []): unknown {
+    if (Array.isArray(schema)) {
+      return schema.map((item, index) =>
+        this._resolveRefs(item, [...path, index.toString()])
+      );
+    }
+    if (typeof schema === "object") {
+      const schemaPos = path.indexOf("schema");
+      return Object.entries(schema as object).reduce((acc, [key, value]) => {
+        if (key === "$ref") {
+          const match = REF_REGEXP.exec(value as string);
+          value = `#/${path
+            .slice(0, schemaPos + 1)
+            .map((p) => p.replace(/~/g, "~0").replace(/\//g, "~1"))
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            .join("/")}${match![1]}`;
+        }
+        return {
+          ...acc,
+          [key]: this._resolveRefs(value, [...path, key]),
+        };
+      }, {} as Record<string, unknown>);
+    }
+
+    return schema;
   }
 }

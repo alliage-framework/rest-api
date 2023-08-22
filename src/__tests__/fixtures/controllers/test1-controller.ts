@@ -13,6 +13,10 @@ type Query = {
 
 @Service("test1_controller")
 export default class Test1Controller extends AbstractController {
+  /**
+   * @description Test1 Controller description
+   * @returns Test1 Controller return description
+   */
   @Post("/api/check-age")
   public async checkAge(request: AbstractRequest<unknown, Query, Body>) {
     if (request.getBody().age < 18) {

@@ -300,7 +300,7 @@ describe("service/metadata-manager", () => {
           expect(metadataManager.getMetadata()).toEqual({});
         });
 
-        it("should not generate returnType metadata if the action does not return a promise", async () => {
+        it("should take the root type in account if the action doesn't return a promise", async () => {
           const metadataManager = createMetadataManager({
             sources: [
               path.resolve(
@@ -313,7 +313,7 @@ describe("service/metadata-manager", () => {
           await metadataManager.generateMetadata();
           expect(
             metadataManager.findMetadata("POST", "/api/post-action")?.returnType
-          ).toEqual({});
+          ).toEqual({ additionalProperties: false, type: "object" });
         });
 
         it("should return 200 as status code if the metadata is not a valid number", async () => {
