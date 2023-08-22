@@ -16,6 +16,11 @@ type Query = {
 
 @Service("test2_controller")
 export default class Test2Controller extends AbstractController {
+  /**
+  /**
+   * @description Test2 Controller description
+   * @returns Test2 Controller return description
+   */
   @Get("/api/hello/:name")
   public async sayHello(request: AbstractRequest<Params, Query>) {
     if (request.getQuery().language === "fr") {

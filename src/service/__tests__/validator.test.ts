@@ -30,6 +30,8 @@ const BASE_ACTION_METADATA: ActionMetadata = {
   controllerName: "TestController",
   validateInput: true,
   validateOutput: true,
+  description: "Test description",
+  returnDescription: "Test return description",
 };
 
 describe("service/validator", () => {

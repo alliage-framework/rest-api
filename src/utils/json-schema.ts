@@ -24,7 +24,7 @@ export class TypeNotConvertibleError extends Error {
   }
 }
 
-interface FileData {
+export interface FileData {
   filepath: string;
   position: {
     line: number;

@@ -50,6 +50,8 @@ describe("process/generate-schema-process", () => {
                 },
                 controllerName: "Test1Controller",
                 defaultStatusCode: 200,
+                description: "Test1 Controller description",
+                returnDescription: "Test1 Controller return description",
                 errors: [
                   {
                     code: "400",
