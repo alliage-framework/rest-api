@@ -1,3 +1,10 @@
+# [1.0.0-beta.7](https://github.com/alliage-framework/rest-api/compare/v1.0.0-beta.6...v1.0.0-beta.7) (2023-08-22)
+
+
+### Features
+
+* fix openapi schema and handles responses descriptions ([#7](https://github.com/alliage-framework/rest-api/issues/7)) ([31d56db](https://github.com/alliage-framework/rest-api/commit/31d56db8f562ea83790006c12646ccd09e723fda))
+
 # [1.0.0-beta.6](https://github.com/alliage-framework/rest-api/compare/v1.0.0-beta.5...v1.0.0-beta.6) (2023-06-26)
 
 
