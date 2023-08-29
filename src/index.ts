@@ -32,6 +32,7 @@ import { createHttpError } from "./error";
 import { ErrorMiddleware } from "./middleware/error-middleware";
 import { JSONParserMiddleware } from "./middleware/json-parser-middleware";
 import { ActionMetadata, MetadataManager } from "./service/metadata-manager";
+import { SchemaGenerator } from "./service/schema-generator";
 import { Validator } from "./service/validator";
 import {
   RestAPIInvalidRequestEvent,
@@ -42,6 +43,7 @@ import {
   RestAPIPreValidateResponseEvent,
 } from "./events";
 import { GenerateSchemaProcess } from "./process/generate-schema-process";
+import { DumpSchemaProcess } from "./process/dump-schema-process";
 import { SchemaMiddleware } from "./middleware/schema-middleware";
 import { GenerateSchemaTask } from "./task/generate-schema-task";
 
@@ -287,6 +289,11 @@ export default class AlliageRestAPIModule extends AbstractLifeCycleAwareModule {
       parameter(`${MAIN_CONFIG_NAME}.metadata.path`),
       parameter(`${MAIN_CONFIG_NAME}.development.disableMetadataGeneration`),
     ]);
+    serviceContainer.registerService("rest-schema-generator", SchemaGenerator, [
+      instanceOf(EventManager),
+      instanceOf(MetadataManager),
+      parameter(OPENAPI_SPECS_CONFIG_NAME),
+    ]);
     serviceContainer.registerService("rest-validator", Validator);
     serviceContainer.registerService(
       "rest-json-parser-middleware",
@@ -299,17 +306,17 @@ export default class AlliageRestAPIModule extends AbstractLifeCycleAwareModule {
     serviceContainer.registerService(
       "rest-schema-middleware",
       SchemaMiddleware,
-      [
-        instanceOf(MetadataManager),
-        parameter(OPENAPI_SPECS_CONFIG_NAME),
-        parameter(`${MAIN_CONFIG_NAME}.schema`),
-        instanceOf(EventManager),
-      ]
+      [instanceOf(SchemaGenerator), parameter(`${MAIN_CONFIG_NAME}.schema`)]
     );
     serviceContainer.registerService(
       "rest-generate-schema-process",
       GenerateSchemaProcess,
       [instanceOf(MetadataManager)]
+    );
+    serviceContainer.registerService(
+      "rest-dump-schema-process",
+      DumpSchemaProcess,
+      [instanceOf(SchemaGenerator)]
     );
     serviceContainer.registerService(
       "rest-generate-schema-task",

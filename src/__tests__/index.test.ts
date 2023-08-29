@@ -21,7 +21,7 @@ import {
 } from "@alliage/webserver";
 import { Arguments, INITIALIZATION_CONTEXT } from "@alliage/framework";
 
-import AlliageRestAPIModule from "..";
+import AlliageRestAPIModule, { DumpSchemaProcess, SchemaGenerator } from "..";
 import { ErrorMiddleware } from "../middleware/error-middleware";
 import { JSONParserMiddleware } from "../middleware/json-parser-middleware";
 import { SchemaMiddleware } from "../middleware/schema-middleware";
@@ -104,6 +104,20 @@ describe("rest-api", () => {
         );
       });
 
+      it("should register the schema generator", () => {
+        expect(registerServiceSpy).toHaveBeenCalledWith(
+          "rest-schema-generator",
+          SchemaGenerator,
+          [
+            instanceOf(EventManager),
+            instanceOf(MetadataManager),
+            expect.objectContaining({
+              path: "rest-api-openapi-specs",
+            }),
+          ]
+        );
+      });
+
       it("should register the validator", () => {
         expect(registerServiceSpy).toHaveBeenCalledWith(
           "rest-validator",
@@ -134,10 +148,8 @@ describe("rest-api", () => {
           "rest-schema-middleware",
           SchemaMiddleware,
           [
-            instanceOf(MetadataManager),
-            expect.objectContaining({ path: "rest-api-openapi-specs" }),
+            instanceOf(SchemaGenerator),
             expect.objectContaining({ path: "rest-api.schema" }),
-            instanceOf(EventManager),
           ]
         );
       });
@@ -147,6 +159,14 @@ describe("rest-api", () => {
           "rest-generate-schema-process",
           GenerateSchemaProcess,
           [instanceOf(MetadataManager)]
+        );
+      });
+
+      it("should register the dump schema process", () => {
+        expect(registerServiceSpy).toHaveBeenCalledWith(
+          "rest-dump-schema-process",
+          DumpSchemaProcess,
+          [instanceOf(SchemaGenerator)]
         );
       });
 
