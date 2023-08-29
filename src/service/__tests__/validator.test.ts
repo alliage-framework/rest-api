@@ -21,6 +21,7 @@ function createDummyRequest() {
 
 const BASE_ACTION_METADATA: ActionMetadata = {
   name: "test",
+  operationId: undefined,
   defaultStatusCode: 200,
   paramsType: {},
   queryType: {},

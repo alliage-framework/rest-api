@@ -24,7 +24,7 @@ describe("Main scenario", () => {
     await sandbox.clear();
   });
 
-  describe("Schema generation", () => {
+  describe("Metadata generation", () => {
     beforeEach(() => {
       if (fs.existsSync(METADATA_PATH)) {
         fs.unlinkSync(METADATA_PATH);
@@ -32,7 +32,7 @@ describe("Main scenario", () => {
     });
 
     describe("With process", () => {
-      it("should generate a schema from the controllers types", async () => {
+      it("should generate the metadata from the controllers types", async () => {
         const p = await sandbox.run(["rest:generate-schema"]);
         await p.waitCompletion();
 
@@ -43,7 +43,7 @@ describe("Main scenario", () => {
     });
 
     describe("With builder task", () => {
-      it("should generate a schema from the controllers types", async () => {
+      it("should generate the metadata from the controllers types", async () => {
         const p = await sandbox.build([]);
         await p.waitCompletion();
 
@@ -52,6 +52,22 @@ describe("Main scenario", () => {
         expect(JSON.parse(schema)).toMatchSnapshot();
       }, 8000);
     });
+  });
+
+  describe("Schema generation", () => {
+    it("should generate the schema", async () => {
+      const p = await sandbox.run(["rest:dump-schema"]);
+      const chunks: string[] = [];
+      p.process.stdout?.on("data", (c: string) => {
+        chunks.push(c);
+      });
+
+      await p.waitCompletion();
+
+      const content = chunks.join("");
+
+      expect(JSON.parse(content)).toMatchSnapshot();
+    }, 8000);
   });
 
   describe("Rest API", () => {

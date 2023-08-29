@@ -430,10 +430,12 @@ export function getControllerMetadata(file: SourceFile) {
     const validateOutput = getActionValidateOutputFlag(methodDecl);
     const description = getStringJsonDocTag(methodDecl, "description");
     const returnDescription = getStringJsonDocTag(methodDecl, "returns");
+    const operationId = getStringJsonDocTag(methodDecl, "operationId");
 
     return [
       {
         name: methodDecl.getName(),
+        operationId,
         description,
         returnDescription,
         defaultStatusCode,

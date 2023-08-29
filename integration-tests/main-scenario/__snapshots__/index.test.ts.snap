@@ -1,5 +1,143 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Main scenario Metadata generation With builder task should generate the metadata from the controllers types 1`] = `
+Object {
+  "post": Array [
+    Object {
+      "actionMetadata": Object {
+        "bodyType": Object {
+          "additionalProperties": false,
+          "properties": Object {
+            "age": Object {
+              "type": "number",
+            },
+          },
+          "required": Array [
+            "age",
+          ],
+          "type": "object",
+        },
+        "controllerName": "MainController",
+        "defaultStatusCode": 200,
+        "errors": Array [],
+        "name": "sayHello",
+        "paramsType": Object {
+          "additionalProperties": false,
+          "properties": Object {
+            "name": Object {
+              "pattern": "[a-zA-Z]+",
+              "type": "string",
+            },
+          },
+          "required": Array [
+            "name",
+          ],
+          "type": "object",
+        },
+        "queryType": Object {
+          "additionalProperties": false,
+          "properties": Object {
+            "language": Object {
+              "enum": Array [
+                "fr",
+                "en",
+              ],
+              "type": "string",
+            },
+          },
+          "type": "object",
+        },
+        "returnType": Object {
+          "additionalProperties": false,
+          "properties": Object {
+            "message": Object {
+              "type": "string",
+            },
+          },
+          "required": Array [
+            "message",
+          ],
+          "type": "object",
+        },
+        "validateInput": true,
+        "validateOutput": true,
+      },
+      "path": "/api/hello/{name}",
+      "pattern": "/^\\\\/api\\\\/hello(?:\\\\/([^\\\\/#\\\\?]+?))[\\\\/#\\\\?]?$/i",
+    },
+  ],
+}
+`;
+
+exports[`Main scenario Metadata generation With process should generate the metadata from the controllers types 1`] = `
+Object {
+  "post": Array [
+    Object {
+      "actionMetadata": Object {
+        "bodyType": Object {
+          "additionalProperties": false,
+          "properties": Object {
+            "age": Object {
+              "type": "number",
+            },
+          },
+          "required": Array [
+            "age",
+          ],
+          "type": "object",
+        },
+        "controllerName": "MainController",
+        "defaultStatusCode": 200,
+        "errors": Array [],
+        "name": "sayHello",
+        "paramsType": Object {
+          "additionalProperties": false,
+          "properties": Object {
+            "name": Object {
+              "pattern": "[a-zA-Z]+",
+              "type": "string",
+            },
+          },
+          "required": Array [
+            "name",
+          ],
+          "type": "object",
+        },
+        "queryType": Object {
+          "additionalProperties": false,
+          "properties": Object {
+            "language": Object {
+              "enum": Array [
+                "fr",
+                "en",
+              ],
+              "type": "string",
+            },
+          },
+          "type": "object",
+        },
+        "returnType": Object {
+          "additionalProperties": false,
+          "properties": Object {
+            "message": Object {
+              "type": "string",
+            },
+          },
+          "required": Array [
+            "message",
+          ],
+          "type": "object",
+        },
+        "validateInput": true,
+        "validateOutput": true,
+      },
+      "path": "/api/hello/{name}",
+      "pattern": "/^\\\\/api\\\\/hello(?:\\\\/([^\\\\/#\\\\?]+?))[\\\\/#\\\\?]?$/i",
+    },
+  ],
+}
+`;
+
 exports[`Main scenario Rest API should provide a OpenAPI spec 1`] = `
 Object {
   "info": Object {
@@ -20,6 +158,7 @@ Object {
   "paths": Object {
     "/api/hello/{name}": Object {
       "post": Object {
+        "operationId": "sayHello",
         "parameters": Array [
           Object {
             "in": "path",
@@ -89,44 +228,42 @@ Object {
 }
 `;
 
-exports[`Main scenario Schema generation With builder task should generate a schema from the controllers types 1`] = `
+exports[`Main scenario Schema generation should generate the schema 1`] = `
 Object {
-  "post": Array [
-    Object {
-      "actionMetadata": Object {
-        "bodyType": Object {
-          "additionalProperties": false,
-          "properties": Object {
-            "age": Object {
-              "type": "number",
-            },
-          },
-          "required": Array [
-            "age",
-          ],
-          "type": "object",
-        },
-        "controllerName": "MainController",
-        "defaultStatusCode": 200,
-        "errors": Array [],
-        "name": "sayHello",
-        "paramsType": Object {
-          "additionalProperties": false,
-          "properties": Object {
-            "name": Object {
+  "info": Object {
+    "contact": Object {
+      "email": "support@example.com",
+      "name": "API Support",
+      "url": "http://www.example.com/support",
+    },
+    "description": "Describe what your API does here...",
+    "license": Object {
+      "name": "Apache 2.0",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0.html",
+    },
+    "title": "Alliage REST API",
+    "version": "1.0.0",
+  },
+  "openapi": "3.0.3",
+  "paths": Object {
+    "/api/hello/{name}": Object {
+      "post": Object {
+        "operationId": "sayHello",
+        "parameters": Array [
+          Object {
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": Object {
               "pattern": "[a-zA-Z]+",
               "type": "string",
             },
           },
-          "required": Array [
-            "name",
-          ],
-          "type": "object",
-        },
-        "queryType": Object {
-          "additionalProperties": false,
-          "properties": Object {
-            "language": Object {
+          Object {
+            "in": "query",
+            "name": "language",
+            "required": false,
+            "schema": Object {
               "enum": Array [
                 "fr",
                 "en",
@@ -134,95 +271,49 @@ Object {
               "type": "string",
             },
           },
-          "type": "object",
-        },
-        "returnType": Object {
-          "additionalProperties": false,
-          "properties": Object {
-            "message": Object {
-              "type": "string",
+        ],
+        "requestBody": Object {
+          "content": Object {
+            "application/json": Object {
+              "schema": Object {
+                "additionalProperties": false,
+                "properties": Object {
+                  "age": Object {
+                    "type": "number",
+                  },
+                },
+                "required": Array [
+                  "age",
+                ],
+                "type": "object",
+              },
             },
           },
-          "required": Array [
-            "message",
-          ],
-          "type": "object",
+          "required": true,
         },
-        "validateInput": true,
-        "validateOutput": true,
+        "responses": Object {
+          "200": Object {
+            "content": Object {
+              "application/json": Object {
+                "schema": Object {
+                  "additionalProperties": false,
+                  "properties": Object {
+                    "message": Object {
+                      "type": "string",
+                    },
+                  },
+                  "required": Array [
+                    "message",
+                  ],
+                  "type": "object",
+                },
+              },
+            },
+            "description": "Success response",
+          },
+        },
       },
-      "path": "/api/hello/{name}",
-      "pattern": "/^\\\\/api\\\\/hello(?:\\\\/([^\\\\/#\\\\?]+?))[\\\\/#\\\\?]?$/i",
     },
-  ],
-}
-`;
-
-exports[`Main scenario Schema generation With process should generate a schema from the controllers types 1`] = `
-Object {
-  "post": Array [
-    Object {
-      "actionMetadata": Object {
-        "bodyType": Object {
-          "additionalProperties": false,
-          "properties": Object {
-            "age": Object {
-              "type": "number",
-            },
-          },
-          "required": Array [
-            "age",
-          ],
-          "type": "object",
-        },
-        "controllerName": "MainController",
-        "defaultStatusCode": 200,
-        "errors": Array [],
-        "name": "sayHello",
-        "paramsType": Object {
-          "additionalProperties": false,
-          "properties": Object {
-            "name": Object {
-              "pattern": "[a-zA-Z]+",
-              "type": "string",
-            },
-          },
-          "required": Array [
-            "name",
-          ],
-          "type": "object",
-        },
-        "queryType": Object {
-          "additionalProperties": false,
-          "properties": Object {
-            "language": Object {
-              "enum": Array [
-                "fr",
-                "en",
-              ],
-              "type": "string",
-            },
-          },
-          "type": "object",
-        },
-        "returnType": Object {
-          "additionalProperties": false,
-          "properties": Object {
-            "message": Object {
-              "type": "string",
-            },
-          },
-          "required": Array [
-            "message",
-          ],
-          "type": "object",
-        },
-        "validateInput": true,
-        "validateOutput": true,
-      },
-      "path": "/api/hello/{name}",
-      "pattern": "/^\\\\/api\\\\/hello(?:\\\\/([^\\\\/#\\\\?]+?))[\\\\/#\\\\?]?$/i",
-    },
-  ],
+  },
 }
 `;

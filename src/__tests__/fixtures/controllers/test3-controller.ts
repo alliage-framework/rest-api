@@ -16,9 +16,10 @@ type Body = {
 export default class Test3Controller extends AbstractController {
   /**
    * @defaultStatusCode 204
+   * @operationId getHierarchyDetails
    */
   @Post("/api/hierarchy")
-  public sayHello(request: AbstractRequest<undefined, undefined, Body>) {
+  public getHierarchy(request: AbstractRequest<undefined, undefined, Body>) {
     console.log(request.getBody());
 
     throw createHttpError(401, undefined);
