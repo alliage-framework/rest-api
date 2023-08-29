@@ -1,3 +1,10 @@
+# [1.0.0-beta.8](https://github.com/alliage-framework/rest-api/compare/v1.0.0-beta.7...v1.0.0-beta.8) (2023-08-29)
+
+
+### Features
+
+* add operationId and the rest:dump-schema process ([#8](https://github.com/alliage-framework/rest-api/issues/8)) ([60f20e0](https://github.com/alliage-framework/rest-api/commit/60f20e002725cfe9a19afbb87c873508bec70e09))
+
 # [1.0.0-beta.7](https://github.com/alliage-framework/rest-api/compare/v1.0.0-beta.6...v1.0.0-beta.7) (2023-08-22)
 
 
