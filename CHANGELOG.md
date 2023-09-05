@@ -1,3 +1,10 @@
+# [1.0.0-beta.9](https://github.com/alliage-framework/rest-api/compare/v1.0.0-beta.8...v1.0.0-beta.9) (2023-09-05)
+
+
+### Bug Fixes
+
+* allowed origins management ([#9](https://github.com/alliage-framework/rest-api/issues/9)) ([91c886b](https://github.com/alliage-framework/rest-api/commit/91c886bb860eb76edb4b96e3542b18c092c4e3a2))
+
 # [1.0.0-beta.8](https://github.com/alliage-framework/rest-api/compare/v1.0.0-beta.7...v1.0.0-beta.8) (2023-08-29)
 
 
