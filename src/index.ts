@@ -46,6 +46,8 @@ import { GenerateSchemaProcess } from "./process/generate-schema-process";
 import { DumpSchemaProcess } from "./process/dump-schema-process";
 import { SchemaMiddleware } from "./middleware/schema-middleware";
 import { GenerateSchemaTask } from "./task/generate-schema-task";
+import { addAccessControlHeaders } from "./utils/http";
+import { CORSMiddleware } from "./middleware/cors-middleware";
 
 export default class AlliageRestAPIModule extends AbstractLifeCycleAwareModule {
   private metadataManager!: MetadataManager;
@@ -104,39 +106,17 @@ export default class AlliageRestAPIModule extends AbstractLifeCycleAwareModule {
     const response = event.getResponse();
     const corsConfigs = this.config.allowedOrigins;
     const reqOrigin = request.getHeader("Origin");
+
     if (
       corsConfigs &&
       reqOrigin &&
-      ((request.getMethod() === HTTP_METHOD.OPTIONS &&
-        (request.getHeader("Access-Control-Request-Method") !== undefined ||
-          request.getHeader("Access-Control-Request-Headers") !== undefined)) ||
-        request.getMethod() === HTTP_METHOD.GET)
+      request.getMethod() === HTTP_METHOD.OPTIONS &&
+      (request.getHeader("Access-Control-Request-Method") !== undefined ||
+        request.getHeader("Access-Control-Request-Headers") !== undefined)
     ) {
-      const originCorsConfig = corsConfigs.find(
-        ({ origin }) => origin === reqOrigin
-      );
-      if (originCorsConfig) {
-        response.setHeader(
-          "Access-Control-Allow-Origin",
-          originCorsConfig.origin
-        );
-        if (request.getMethod() === HTTP_METHOD.OPTIONS) {
-          response.setHeader(
-            "Access-Control-Allow-Headers",
-            originCorsConfig.headers?.join(", ") ?? ""
-          );
-          response.setHeader(
-            "Access-Control-Allow-Methods",
-            originCorsConfig.methods?.join(", ") ?? ""
-          );
-          response.setHeader(
-            "Access-Control-Max-Age",
-            originCorsConfig.maxAge?.toString() ?? ""
-          );
-          response.setStatus(204);
-          response.end();
-        }
-      }
+      addAccessControlHeaders(request, response, corsConfigs);
+      response.setStatus(204);
+      response.end();
     }
   };
 
@@ -302,6 +282,9 @@ export default class AlliageRestAPIModule extends AbstractLifeCycleAwareModule {
     serviceContainer.registerService("rest-error-middleware", ErrorMiddleware, [
       instanceOf(EventManager),
       parameter("environment"),
+    ]);
+    serviceContainer.registerService("rest-cors-middleware", CORSMiddleware, [
+      parameter(`${MAIN_CONFIG_NAME}.allowedOrigins`),
     ]);
     serviceContainer.registerService(
       "rest-schema-middleware",
