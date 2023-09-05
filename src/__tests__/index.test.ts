@@ -40,6 +40,7 @@ import {
   RestAPIPreValidateResponseEvent,
   REST_API_EVENTS,
 } from "../events";
+import { CORSMiddleware } from "../middleware/cors-middleware";
 
 const METADATA_PATH = `/tmp/${path.basename(__filename)}.metadata.json`;
 const DEFAULT_CONFIG = yaml.load(
@@ -140,6 +141,14 @@ describe("rest-api", () => {
             instanceOf(EventManager),
             expect.objectContaining({ path: "environment" }),
           ]
+        );
+      });
+
+      it("should register the CORS middleware", () => {
+        expect(registerServiceSpy).toHaveBeenCalledWith(
+          "rest-cors-middleware",
+          CORSMiddleware,
+          [expect.objectContaining({ path: "rest-api.allowedOrigins" })]
         );
       });
 
@@ -346,52 +355,6 @@ describe("rest-api", () => {
           );
         });
 
-        it("should add the access control header and let the request continue when the method is GET and a CORS config is defined", async () => {
-          const { restApiModule } = await createServicesAndModule({
-            config: {
-              ...DEFAULT_CONFIG,
-              allowedOrigins: [
-                {
-                  origin: "https://acme.com",
-                  headers: ["X-Custom-Header1", "X-Custom-Header2"],
-                  methods: ["GET"],
-                  maxAge: 4800,
-                },
-              ],
-            },
-          });
-          const request = createRequest({
-            method: "GET",
-            headers: {
-              Origin: "https://acme.com",
-            },
-          });
-          const response = createResponse();
-
-          await restApiModule.handlePreRequest(
-            new AdapterPreRequestEvent(request, response, "express")
-          );
-
-          expect(response.setStatus).not.toHaveBeenCalled();
-          expect(response.end).not.toHaveBeenCalled();
-          expect(response.setHeader).toHaveBeenCalledWith(
-            "Access-Control-Allow-Origin",
-            "https://acme.com"
-          );
-          expect(response.setHeader).not.toHaveBeenCalledWith(
-            "Access-Control-Allow-Headers",
-            "X-Custom-Header1, X-Custom-Header2"
-          );
-          expect(response.setHeader).not.toHaveBeenCalledWith(
-            "Access-Control-Allow-Methods",
-            "POST, PUT"
-          );
-          expect(response.setHeader).not.toHaveBeenCalledWith(
-            "Access-Control-Max-Age",
-            "4800"
-          );
-        });
-
         it("should return empty values for CORS config properties that are not defined", async () => {
           const { restApiModule } = await createServicesAndModule({
             config: {
@@ -456,38 +419,6 @@ describe("rest-api", () => {
           expect(response.setHeader).not.toHaveBeenCalled();
         });
 
-        it("should do nothing if there is no CORS config corresponding to the given origin", async () => {
-          const { restApiModule } = await createServicesAndModule({
-            config: {
-              ...DEFAULT_CONFIG,
-              allowedOrigins: [
-                {
-                  origin: "https://acme.com",
-                  headers: ["X-Custom-Header1", "X-Custom-Header2"],
-                  methods: ["POST", "PUT"],
-                  maxAge: 4800,
-                },
-              ],
-            },
-          });
-          const request = createRequest({
-            method: "OPTIONS",
-            headers: {
-              Origin: "https://acme.fr", // Different origin
-              "Access-Control-Request-Method": "",
-              "Access-Control-Request-Headers": "",
-            },
-          });
-          const response = createResponse();
-
-          await restApiModule.handlePreRequest(
-            new AdapterPreRequestEvent(request, response, "express")
-          );
-
-          expect(response.setStatus).not.toHaveBeenCalled();
-          expect(response.setHeader).not.toHaveBeenCalled();
-        });
-
         it("should do nothing if there's no origin header in the request", async () => {
           const { restApiModule } = await createServicesAndModule({
             config: {
@@ -519,7 +450,7 @@ describe("rest-api", () => {
           expect(response.setHeader).not.toHaveBeenCalled();
         });
 
-        it("should do nothing if the request's method is not OPTIONS or GET", async () => {
+        it("should do nothing if the request's method is not OPTIONS", async () => {
           const { restApiModule } = await createServicesAndModule({
             config: {
               ...DEFAULT_CONFIG,
