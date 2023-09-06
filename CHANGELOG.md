@@ -1,3 +1,10 @@
+# [1.0.0-beta.10](https://github.com/alliage-framework/rest-api/compare/v1.0.0-beta.9...v1.0.0-beta.10) (2023-09-06)
+
+
+### Bug Fixes
+
+* request phase of the CORS middleware ([#10](https://github.com/alliage-framework/rest-api/issues/10)) ([b86e330](https://github.com/alliage-framework/rest-api/commit/b86e3306a2f97e4e1c0a33889f7c87e7a6ce94aa))
+
 # [1.0.0-beta.9](https://github.com/alliage-framework/rest-api/compare/v1.0.0-beta.8...v1.0.0-beta.9) (2023-09-05)
 
 
