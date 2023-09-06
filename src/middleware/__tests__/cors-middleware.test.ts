@@ -32,10 +32,8 @@ describe("middleware/cors-middleware", () => {
     ]);
 
     describe("#getRequestPhase", () => {
-      it("should apply after the controllers", () => {
-        expect(middleware.getRequestPhase()).toBe(
-          REQUEST_PHASE.POST_CONTROLLER
-        );
+      it("should apply before the controllers", () => {
+        expect(middleware.getRequestPhase()).toBe(REQUEST_PHASE.PRE_CONTROLLER);
       });
     });
 
