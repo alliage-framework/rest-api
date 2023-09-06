@@ -11,7 +11,7 @@ export class CORSMiddleware extends AbstractMiddleware {
     super();
   }
 
-  getRequestPhase = () => REQUEST_PHASE.POST_CONTROLLER;
+  getRequestPhase = () => REQUEST_PHASE.PRE_CONTROLLER;
 
   async apply(context: Context) {
     const request = context.getRequest();
