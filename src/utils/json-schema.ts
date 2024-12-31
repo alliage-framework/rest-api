@@ -203,7 +203,6 @@ function convertObjectTypeToJsonSchema(
     },
   ];
 
-  t.getSymbolOrThrow().getDeclarations()[0];
   const required: string[] = [];
   const properties = t
     .getProperties()
@@ -332,12 +331,12 @@ function convertUnionTypeToJsonSchema(
     }
   );
 
-  const anyOf = [
+  const oneOf = [
     ...otherTypes.map((subType, index) => {
       return convertTypeToJsonSchema(
         subType,
         fileData,
-        [...path, "anyOf", index.toString()],
+        [...path, "oneOf", index.toString()],
         visitedTypes
       );
     }),
@@ -350,7 +349,7 @@ function convertUnionTypeToJsonSchema(
   });
 
   if (booleanTypes.length > 0) {
-    anyOf.push({
+    oneOf.push({
       type: "boolean",
       ...(hasMixedBooleans
         ? {}
@@ -358,7 +357,7 @@ function convertUnionTypeToJsonSchema(
     });
   }
 
-  return { anyOf };
+  return { oneOf };
 }
 
 function convertIntersectionTypeToJsonSchema(
