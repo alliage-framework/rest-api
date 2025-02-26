@@ -1,3 +1,10 @@
+# [1.0.0-beta.11](https://github.com/alliage-framework/rest-api/compare/v1.0.0-beta.10...v1.0.0-beta.11) (2025-02-26)
+
+
+### Bug Fixes
+
+* convert union types to oneOf instead of anyOf ([#11](https://github.com/alliage-framework/rest-api/issues/11)) ([c53c3c2](https://github.com/alliage-framework/rest-api/commit/c53c3c2cbc00a42f9a5809656e821845d6e60883))
+
 # [1.0.0-beta.10](https://github.com/alliage-framework/rest-api/compare/v1.0.0-beta.9...v1.0.0-beta.10) (2023-09-06)
 
 
