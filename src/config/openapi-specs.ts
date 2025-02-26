@@ -1,7 +1,7 @@
 import cloneDeep from "lodash.clonedeep";
 
 import openapiSchema from "../generated/schemas/v3.0";
-import { HttpsSpecOpenapisOrgOas30Schema20210928 } from "../generated/schemas/v3.0.d";
+import { HttpsSpecOpenapisOrgOas30SchemaWORKINPROGRESS } from "../generated/schemas/v3.0.d";
 
 export const CONFIG_NAME = "rest-api-openapi-specs";
 
@@ -14,4 +14,4 @@ schema.$schema = undefined;
 schema.definitions.Schema.properties.multipleOf.exclusiveMinimum = 0;
 /* eslint-enable @typescript-eslint/ban-ts-comment */
 
-export type Config = HttpsSpecOpenapisOrgOas30Schema20210928;
+export type Config = HttpsSpecOpenapisOrgOas30SchemaWORKINPROGRESS;

@@ -375,7 +375,7 @@ describe("utils/json-schema", () => {
         const { type, fileData } = getTypeAndFileData("UnionType");
 
         expect(convertTypeToJsonSchema(type, fileData)).toEqual({
-          anyOf: [
+          oneOf: [
             {
               type: "string",
             },
@@ -437,7 +437,7 @@ describe("utils/json-schema", () => {
         );
 
         expect(convertTypeToJsonSchema(type, fileData)).toEqual({
-          anyOf: [
+          oneOf: [
             {
               type: "string",
             },
