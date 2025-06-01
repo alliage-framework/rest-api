@@ -4,7 +4,7 @@ import {
   HTTP_METHOD,
 } from "@alliage/webserver";
 
-import { Config } from "../config/main";
+import { Config } from "../config/main.js";
 
 export function addAccessControlHeaders(
   request: AbstractRequest,

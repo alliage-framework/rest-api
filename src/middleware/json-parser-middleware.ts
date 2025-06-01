@@ -1,6 +1,6 @@
 import { REQUEST_PHASE, AbstractMiddleware, Context } from "@alliage/webserver";
 
-import { createHttpError } from "../error";
+import { createHttpError } from "../error.js";
 
 /**
  * Transforms JSON string in the request body in an actual javascript object
@@ -22,7 +22,7 @@ export class JSONParserMiddleware extends AbstractMiddleware {
       try {
         const jsonObject = JSON.parse(content);
         request.setBody(jsonObject);
-      } catch (error) {
+      } catch (_error) {
         throw createHttpError(400, {
           message: "Invalid JSON",
         });

@@ -1,7 +1,8 @@
+import { describe, it, expect, beforeAll, afterAll, vi } from "vitest";
 import path from "path";
 import fs from "fs";
 
-import { MetadataManager } from "../metadata-manager";
+import { MetadataManager } from "../metadata-manager.js";
 
 const METADATA_PATH = `/tmp/${path.basename(__filename)}.metadata.json`;
 
@@ -75,7 +76,7 @@ describe("service/metadata-manager", () => {
         });
 
         it("should load metadata from a file only", async () => {
-          const spy = jest.spyOn(metadataManager, "generateMetadata");
+          const spy = vi.spyOn(metadataManager, "generateMetadata");
 
           await metadataManager.loadMetadata();
           expect(spy).not.toHaveBeenCalled();
@@ -94,7 +95,7 @@ describe("service/metadata-manager", () => {
           const metadataManager = createMetadataManager({
             environment: "development",
           });
-          const spy = jest.spyOn(metadataManager, "generateMetadata");
+          const spy = vi.spyOn(metadataManager, "generateMetadata");
 
           await metadataManager.loadMetadata();
           expect(spy).toHaveBeenCalled();
@@ -107,7 +108,7 @@ describe("service/metadata-manager", () => {
             environment: "development",
             disableMetadataGeneration: true,
           });
-          const spy = jest.spyOn(metadataManager, "generateMetadata");
+          const spy = vi.spyOn(metadataManager, "generateMetadata");
 
           await metadataManager.loadMetadata();
           expect(spy).not.toHaveBeenCalled();
@@ -206,6 +207,8 @@ describe("service/metadata-manager", () => {
                 actionMetadata: {
                   bodyType: {},
                   controllerName: "NoDecoratorDefinitionController",
+                  summary: undefined,
+                  tags: [],
                   defaultStatusCode: 200,
                   errors: [],
                   name: "postAction",
@@ -217,9 +220,12 @@ describe("service/metadata-manager", () => {
                   },
                   validateInput: true,
                   validateOutput: true,
+                  description: undefined,
+                  operationId: undefined,
+                  returnDescription: undefined,
                 },
                 path: "/api/post-action",
-                pattern: "/^\\/api\\/post-action[\\/#\\?]?$/i",
+                pattern: "/^(?:\\/api\\/post-action)(?:\\/$)?$/i",
               },
             ],
           });
@@ -348,18 +354,20 @@ describe("service/metadata-manager", () => {
         });
 
         it("should use the tsconfig.json file at the root of the project by default", async () => {
-          const ProjectMock = jest.fn().mockImplementationOnce(() => ({
+          const ProjectMock = vi.fn().mockImplementationOnce(() => ({
             getSourceFiles: () => [],
           }));
 
-          jest.doMock("ts-morph", () => ({
-            ...(jest.requireActual("ts-morph") as object),
+          vi.doMock("ts-morph", async () => ({
+            ...((await vi.importActual("ts-morph")) as object),
             Project: ProjectMock,
           }));
 
-          jest.resetModules();
-          const AlteredMetadataManager: typeof MetadataManager =
-            jest.requireActual("../metadata-manager").MetadataManager;
+          vi.resetModules();
+          const { MetadataManager: AlteredMetadataManager } =
+            (await vi.importActual("../metadata-manager")) as {
+              MetadataManager: typeof MetadataManager;
+            };
 
           const alteredMetadataManager = new AlteredMetadataManager(
             "production",
@@ -374,7 +382,7 @@ describe("service/metadata-manager", () => {
             tsConfigFilePath: path.resolve("./tsconfig.json"),
           });
 
-          jest.dontMock("ts-morph");
+          vi.doUnmock("ts-morph");
         });
       });
 

@@ -1,8 +1,8 @@
 import { EventManager } from "@alliage/lifecycle";
 import { REQUEST_PHASE, AbstractMiddleware, Context } from "@alliage/webserver";
 
-import { RestAPIPostErrorEvent, RestAPIPreErrorEvent } from "../events";
-import { HttpError } from "../error";
+import { RestAPIPostErrorEvent, RestAPIPreErrorEvent } from "../events.js";
+import { HttpError } from "../error.js";
 
 export class ErrorMiddleware extends AbstractMiddleware {
   constructor(private eventManager: EventManager, private env: string) {

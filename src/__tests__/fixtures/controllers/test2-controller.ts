@@ -1,7 +1,7 @@
 import { Service } from "@alliage/service-loader";
 import { AbstractController, Get, AbstractRequest } from "@alliage/webserver";
 
-import { createHttpError } from "../../../error";
+import { createHttpError } from "../../../error.js";
 
 type Params = {
   /**

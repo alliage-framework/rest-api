@@ -1,35 +1,11 @@
-# Downloads yq binanry
-OS=$(uname -s | tr A-Z a-z)
-ARCH=$(uname -m)
-if [ "$ARCH" = "aarch64" ]; then
-  ARCH="arm64"
-fi
-if [ "$ARCH" = "x86_64" ]; then
-  ARCH="amd64"
-fi
-PLATFORM="${OS}_${ARCH}"
-echo "OS: $OS"
-echo "ARCH: $ARCH"
-echo "PLATFORM: $PLATFORM"
-wget "https://github.com/mikefarah/yq/releases/latest/download/yq_$PLATFORM" -O ./yq
-chmod +x ./yq
+mkdir -p src/generated/schemas
+curl https://spec.openapis.org/oas/3.1/schema/2025-02-13 > src/generated/schemas/v3.1.original.json
 
-# Downloads OpenAPI schema
-mkdir .tmp-open-api-spec
-cd .tmp-open-api-spec
-git clone https://github.com/OAI/OpenAPI-Specification.git
-if [ ! -f ../src/generated/schemas ]; then
-  mkdir -p ../src/generated/schemas
-fi
-# Generates TypeScript types from OpenAPI schema
-cat OpenAPI-Specification/schemas/v3.0/schema.yaml | ../yq eval -o=json | npx json2ts >../src/generated/schemas/v3.0.d.ts
+# Converts original schema to TS
+npx quicktype -s schema src/generated/schemas/v3.1.original.json -o src/generated/schemas/v3.1.ts -t OpenAPIV31
 
-# Generates TS exporting OpenAPI schema
-printf "export default " >../src/generated/schemas/v3.0.ts
-cat OpenAPI-Specification/schemas/v3.0/schema.yaml | ../yq eval -o=json >> ../src/generated/schemas/v3.0.ts
+# Converts TS to JSON Schema
+npx quicktype --lang schema --src-lang typescript --top-level OpenAPIV31 -o src/generated/schemas/v3.1.json src/generated/schemas/v3.1.ts
 
-cd ..
-
-## Cleanup
-rm -rf .tmp-open-api-spec
-rm -rf yq
+# Removes original schema
+rm src/generated/schemas/v3.1.original.json

@@ -1,20 +1,21 @@
+import { describe, it, expect, beforeEach, vi, type Mock } from "vitest";
 import { AbstractRequest, AbstractResponse } from "@alliage/webserver";
 
-import { ActionMetadata } from "../metadata-manager";
-import { Validator } from "../validator";
+import { ActionMetadata } from "../metadata-manager.js";
+import { Validator } from "../validator.js";
 
 function createDummyResponse() {
   const response = {
-    getBody: jest.fn(),
+    getBody: vi.fn(),
   } as unknown as AbstractResponse;
   return response;
 }
 
 function createDummyRequest() {
   const request = {
-    getBody: jest.fn(),
-    getQuery: jest.fn(),
-    getParams: jest.fn(),
+    getBody: vi.fn(),
+    getQuery: vi.fn(),
+    getParams: vi.fn(),
   } as unknown as AbstractRequest;
   return request;
 }
@@ -42,7 +43,7 @@ describe("service/validator", () => {
     const dummyResponse = createDummyResponse();
 
     beforeEach(() => {
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     describe("#validateRequest", () => {
@@ -81,13 +82,13 @@ describe("service/validator", () => {
       };
 
       it("should return undefined if the request is valid", () => {
-        (dummyRequest.getBody as jest.Mock).mockReturnValueOnce({
+        (dummyRequest.getBody as Mock).mockReturnValueOnce({
           age: 18,
         });
-        (dummyRequest.getQuery as jest.Mock).mockReturnValueOnce({
+        (dummyRequest.getQuery as Mock).mockReturnValueOnce({
           country: "fr",
         });
-        (dummyRequest.getParams as jest.Mock).mockReturnValueOnce({
+        (dummyRequest.getParams as Mock).mockReturnValueOnce({
           name: "John",
         });
 
@@ -97,13 +98,13 @@ describe("service/validator", () => {
       });
 
       it("should return an error if the payload is invalid", () => {
-        (dummyRequest.getBody as jest.Mock).mockReturnValueOnce({
+        (dummyRequest.getBody as Mock).mockReturnValueOnce({
           age: "eighteen",
         });
-        (dummyRequest.getQuery as jest.Mock).mockReturnValueOnce({
+        (dummyRequest.getQuery as Mock).mockReturnValueOnce({
           country: [30],
         });
-        (dummyRequest.getParams as jest.Mock).mockReturnValueOnce({});
+        (dummyRequest.getParams as Mock).mockReturnValueOnce({});
 
         expect(validator.validateRequest(metadata, dummyRequest)).toEqual([
           {
@@ -162,7 +163,7 @@ describe("service/validator", () => {
       };
 
       it("should return undefined if the response is valid", () => {
-        (dummyResponse.getBody as jest.Mock).mockReturnValueOnce({
+        (dummyResponse.getBody as Mock).mockReturnValueOnce({
           age: 18,
         });
 
@@ -172,7 +173,7 @@ describe("service/validator", () => {
       });
 
       it("should return an error if the payload is invalid", () => {
-        (dummyResponse.getBody as jest.Mock).mockReturnValueOnce({
+        (dummyResponse.getBody as Mock).mockReturnValueOnce({
           age: "eighteen",
         });
 

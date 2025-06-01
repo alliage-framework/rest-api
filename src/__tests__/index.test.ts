@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeAll, vi } from "vitest";
 import path from "path";
 import fs from "fs";
 
@@ -21,17 +22,17 @@ import {
 } from "@alliage/webserver";
 import { Arguments, INITIALIZATION_CONTEXT } from "@alliage/framework";
 
-import AlliageRestAPIModule, { DumpSchemaProcess, SchemaGenerator } from "..";
-import { ErrorMiddleware } from "../middleware/error-middleware";
-import { JSONParserMiddleware } from "../middleware/json-parser-middleware";
-import { SchemaMiddleware } from "../middleware/schema-middleware";
-import { GenerateSchemaProcess } from "../process/generate-schema-process";
-import { MetadataManager } from "../service/metadata-manager";
-import { Validator } from "../service/validator";
-import { GenerateSchemaTask } from "../task/generate-schema-task";
-import { schema as openApiSchema } from "../config/openapi-specs";
-import { schema as mainSchema, Config as MainConfig } from "../config/main";
-import { HttpError } from "../error";
+import AlliageRestAPIModule, { DumpSchemaProcess, SchemaGenerator } from "../index.js";
+import { ErrorMiddleware } from "../middleware/error-middleware.js";
+import { JSONParserMiddleware } from "../middleware/json-parser-middleware.js";
+import { SchemaMiddleware } from "../middleware/schema-middleware.js";
+import { GenerateSchemaProcess } from "../process/generate-schema-process.js";
+import { MetadataManager } from "../service/metadata-manager.js";
+import { Validator } from "../service/validator.js";
+import { GenerateSchemaTask } from "../task/generate-schema-task.js";
+import { schema as openApiSchema } from "../config/openapi-specs.js";
+import { schema as mainSchema, Config as MainConfig } from "../config/main.js";
+import { HttpError } from "../error.js";
 import {
   RestAPIInvalidRequestEvent,
   RestAPIInvalidResponseEvent,
@@ -39,8 +40,8 @@ import {
   RestAPIPreValidateRequestEvent,
   RestAPIPreValidateResponseEvent,
   REST_API_EVENTS,
-} from "../events";
-import { CORSMiddleware } from "../middleware/cors-middleware";
+} from "../events.js";
+import { CORSMiddleware } from "../middleware/cors-middleware.js";
 
 const METADATA_PATH = `/tmp/${path.basename(__filename)}.metadata.json`;
 const DEFAULT_CONFIG = yaml.load(
@@ -49,16 +50,16 @@ const DEFAULT_CONFIG = yaml.load(
     .toString()
 ) as MainConfig;
 
-jest.mock("@alliage/di", () => {
-  const module = jest.requireActual("@alliage/di");
+vi.mock("@alliage/di", async (importOriginal) => {
+  const module = await importOriginal<typeof import("@alliage/di")>();
   return {
-    ...(module as any),
+    ...module,
     parameter: (path: string) => ({ ...module.parameter(path), path }),
   };
 });
 
-jest.mock("@alliage/config-loader", () => ({
-  ...(jest.requireActual("@alliage/config-loader") as any),
+vi.mock("@alliage/config-loader", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@alliage/config-loader")>()),
   validators: { jsonSchema: (schema: object) => schema },
 }));
 
@@ -81,7 +82,7 @@ describe("rest-api", () => {
 
     describe("#registerServices", () => {
       const serviceContainer = new ServiceContainer();
-      const registerServiceSpy = jest.spyOn(
+      const registerServiceSpy = vi.spyOn(
         serviceContainer,
         "registerService"
       );
@@ -257,38 +258,36 @@ describe("rest-api", () => {
       function createRequest({
         headers = {} as Record<string, string>,
         method = "GET",
-        body = {} as any,
+        body = {} as Record<string, unknown>,
         params = {} as Params,
         query = {} as Params,
         path = "",
       } = {}) {
         return {
-          getMethod: jest.fn().mockReturnValue(method),
-          getHeader: jest
-            .fn()
+          getMethod: vi.fn().mockReturnValue(method),
+          getHeader: vi.fn()
             .mockImplementation((name: string) => headers[name]),
-          getBody: jest.fn().mockReturnValue(body),
-          getQuery: jest.fn().mockReturnValue(query),
-          getParams: jest.fn().mockReturnValue(params),
-          getPath: jest.fn().mockReturnValue(path),
+          getBody: vi.fn().mockReturnValue(body),
+          getQuery: vi.fn().mockReturnValue(query),
+          getParams: vi.fn().mockReturnValue(params),
+          getPath: vi.fn().mockReturnValue(path),
         } as unknown as AbstractRequest;
       }
 
       function createResponse({
         status = 200,
         headers = {} as Record<string, string>,
-        body = undefined as any,
+        body = undefined as unknown,
       } = {}) {
         return {
-          setStatus: jest.fn(),
-          setHeader: jest.fn(),
-          setBody: jest.fn(),
-          getStatus: jest.fn().mockReturnValue(status),
-          getHeader: jest
-            .fn()
+          setStatus: vi.fn(),
+          setHeader: vi.fn(),
+          setBody: vi.fn(),
+          getStatus: vi.fn().mockReturnValue(status),
+          getHeader: vi.fn()
             .mockImplementation((name: string) => headers[name]),
-          getBody: jest.fn().mockReturnValue(body),
-          end: jest.fn(),
+          getBody: vi.fn().mockReturnValue(body),
+          end: vi.fn(),
         } as unknown as AbstractResponse;
       }
 
@@ -296,8 +295,7 @@ describe("rest-api", () => {
         it("should load the metadata", async () => {
           const { restApiModule, services } = await createServicesAndModule();
 
-          const loadMetadataSpy = jest
-            .spyOn(services.metadataManager, "loadMetadata")
+          const loadMetadataSpy = vi.spyOn(services.metadataManager, "loadMetadata")
             .mockResolvedValue();
 
           await restApiModule.handleServerStarted();
@@ -544,14 +542,14 @@ describe("rest-api", () => {
             "/api/check-age"
           );
 
-          const preValidateRequestHandler = jest.fn(
+          const preValidateRequestHandler = vi.fn(
             (e: RestAPIPreValidateRequestEvent) => {
               expect(e.getType()).toEqual(REST_API_EVENTS.PRE_VALIDATE_REQUEST);
               expect(e.getMetadata()).toEqual(expectedMetadata);
               expect(e.getRequest()).toBe(request);
             }
           );
-          const invalidRequestHandler = jest.fn(
+          const invalidRequestHandler = vi.fn(
             (e: RestAPIInvalidRequestEvent) => {
               expect(e.getType()).toEqual(REST_API_EVENTS.INVALID_REQUEST);
               expect(e.getErrors()).toEqual([
@@ -654,14 +652,14 @@ describe("rest-api", () => {
             "/api/check-age"
           );
 
-          const preValidateRequestHandler = jest.fn(
+          const preValidateRequestHandler = vi.fn(
             (e: RestAPIPreValidateRequestEvent) => {
               expect(e.getType()).toEqual(REST_API_EVENTS.PRE_VALIDATE_REQUEST);
               expect(e.getMetadata()).toEqual(expectedMetadata);
               expect(e.getRequest()).toBe(request);
             }
           );
-          const postValidateRequestHandler = jest.fn(
+          const postValidateRequestHandler = vi.fn(
             (e: RestAPIPostValidateRequestEvent) => {
               expect(e.getType()).toEqual(
                 REST_API_EVENTS.POST_VALIDATE_REQUEST
@@ -728,8 +726,8 @@ describe("rest-api", () => {
           });
           const response = createResponse();
 
-          const preValidateRequestHandler = jest.fn();
-          const postValidateRequestHandler = jest.fn();
+          const preValidateRequestHandler = vi.fn();
+          const postValidateRequestHandler = vi.fn();
 
           eventManager.on(
             REST_API_EVENTS.PRE_VALIDATE_REQUEST,
@@ -774,8 +772,8 @@ describe("rest-api", () => {
           });
           const response = createResponse();
 
-          const preValidateRequestHandler = jest.fn();
-          const postValidateRequestHandler = jest.fn();
+          const preValidateRequestHandler = vi.fn();
+          const postValidateRequestHandler = vi.fn();
 
           eventManager.on(
             REST_API_EVENTS.PRE_VALIDATE_REQUEST,
@@ -819,8 +817,8 @@ describe("rest-api", () => {
           });
           const response = createResponse();
 
-          const preValidateRequestHandler = jest.fn();
-          const postValidateRequestHandler = jest.fn();
+          const preValidateRequestHandler = vi.fn();
+          const postValidateRequestHandler = vi.fn();
 
           eventManager.on(
             REST_API_EVENTS.PRE_VALIDATE_REQUEST,
@@ -917,7 +915,7 @@ describe("rest-api", () => {
             },
           ];
 
-          const preValidateResponseHandler = jest.fn(
+          const preValidateResponseHandler = vi.fn(
             (e: RestAPIPreValidateResponseEvent) => {
               expect(e.getType()).toEqual(
                 REST_API_EVENTS.PRE_VALIDATE_RESPONSE
@@ -926,7 +924,7 @@ describe("rest-api", () => {
               expect(e.getResponse()).toBe(response);
             }
           );
-          const invalidResponseHandler = jest.fn(
+          const invalidResponseHandler = vi.fn(
             (e: RestAPIInvalidResponseEvent) => {
               expect(e.getType()).toEqual(REST_API_EVENTS.INVALID_RESPONSE);
               expect(e.getErrors()).toEqual(expectedErrors);
@@ -1014,7 +1012,7 @@ describe("rest-api", () => {
             "/api/check-age"
           );
 
-          const preValidateResponseHandler = jest.fn(
+          const preValidateResponseHandler = vi.fn(
             (e: RestAPIPreValidateResponseEvent) => {
               expect(e.getType()).toEqual(
                 REST_API_EVENTS.PRE_VALIDATE_RESPONSE
@@ -1023,7 +1021,7 @@ describe("rest-api", () => {
               expect(e.getResponse()).toBe(response);
             }
           );
-          const postValidateResponseHandler = jest.fn(
+          const postValidateResponseHandler = vi.fn(
             (e: RestAPIInvalidResponseEvent) => {
               expect(e.getType()).toEqual(
                 REST_API_EVENTS.POST_VALIDATE_RESPONSE
@@ -1127,7 +1125,7 @@ describe("rest-api", () => {
             },
           ];
 
-          const preValidateResponseHandler = jest.fn(
+          const preValidateResponseHandler = vi.fn(
             (e: RestAPIPreValidateResponseEvent) => {
               expect(e.getType()).toEqual(
                 REST_API_EVENTS.PRE_VALIDATE_RESPONSE
@@ -1136,7 +1134,7 @@ describe("rest-api", () => {
               expect(e.getResponse()).toBe(response);
             }
           );
-          const invalidResponseHandler = jest.fn(
+          const invalidResponseHandler = vi.fn(
             (e: RestAPIInvalidResponseEvent) => {
               expect(e.getType()).toEqual(REST_API_EVENTS.INVALID_RESPONSE);
               expect(e.getErrors()).toEqual(expectedErrors);
@@ -1202,8 +1200,8 @@ describe("rest-api", () => {
 
           const response = createResponse({ body: validBody });
 
-          const preValidateResponseHandler = jest.fn();
-          const postValidateResponseHandler = jest.fn();
+          const preValidateResponseHandler = vi.fn();
+          const postValidateResponseHandler = vi.fn();
           eventManager.on(
             REST_API_EVENTS.PRE_VALIDATE_RESPONSE,
             preValidateResponseHandler
@@ -1266,8 +1264,8 @@ describe("rest-api", () => {
 
           const response = createResponse({ body: validBody });
 
-          const preValidateResponseHandler = jest.fn();
-          const postValidateResponseHandler = jest.fn();
+          const preValidateResponseHandler = vi.fn();
+          const postValidateResponseHandler = vi.fn();
           eventManager.on(
             REST_API_EVENTS.PRE_VALIDATE_RESPONSE,
             preValidateResponseHandler
@@ -1325,8 +1323,8 @@ describe("rest-api", () => {
           });
           const response = createResponse();
 
-          const preValidateResponseHandler = jest.fn();
-          const postValidateResponseHandler = jest.fn();
+          const preValidateResponseHandler = vi.fn();
+          const postValidateResponseHandler = vi.fn();
           eventManager.on(
             REST_API_EVENTS.PRE_VALIDATE_RESPONSE,
             preValidateResponseHandler
@@ -1388,7 +1386,7 @@ describe("rest-api", () => {
           const body = { message: "test" };
           const response = createResponse({ body });
 
-          const findMetadataSpy = jest.spyOn(metadataManager, "findMetadata");
+          const findMetadataSpy = vi.spyOn(metadataManager, "findMetadata");
 
           await restApiModule.handlePreController(
             new AdapterPreControllerEvent(

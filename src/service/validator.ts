@@ -1,8 +1,8 @@
-import Ajv, { ValidateFunction } from "ajv";
+import { Ajv, ValidateFunction } from "ajv";
 import addFormats from "ajv-formats";
 import { AbstractRequest, AbstractResponse } from "@alliage/webserver";
 
-import { ActionMetadata } from "./metadata-manager";
+import { ActionMetadata } from "./metadata-manager.js";
 
 interface ActionValidator {
   request: {
@@ -32,7 +32,7 @@ export class Validator {
 
   constructor() {
     this.ajv = new Ajv({ coerceTypes: true, allErrors: true, logger: false });
-    addFormats(this.ajv);
+    addFormats.default(this.ajv);
   }
 
   private getActionValidators(metadata: ActionMetadata) {

@@ -1,2 +1,2 @@
-export * from "./generate-schema-process";
-export * from "./dump-schema-process";
+export * from "./generate-schema-process.js";
+export * from "./dump-schema-process.js";

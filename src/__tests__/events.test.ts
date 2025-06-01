@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vitest";
 import { AbstractRequest, AbstractResponse } from "@alliage/webserver";
 
 import {
@@ -12,10 +13,10 @@ import {
   RestAPIPostErrorEvent,
   RestAPIPreGenerateSchemaEvent,
   RestAPIPostGenerateSchemaEvent,
-} from "../events";
-import { ActionMetadata, Metadata } from "../service/metadata-manager";
-import { Config as OpenAPISpecs } from "../config/openapi-specs";
-import { ValidationErrors } from "../service/validator";
+} from "../events.js";
+import { ActionMetadata, Metadata } from "../service/metadata-manager.js";
+import { Config as OpenAPISpecs } from "../config/openapi-specs.js";
+import { ValidationErrors } from "../service/validator.js";
 
 describe("events", () => {
   const dummyMetadata = {} as unknown as ActionMetadata;

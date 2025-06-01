@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { describe, it, expect } from "vitest";
 import path from "path";
 
 import { Project } from "ts-morph";
@@ -6,7 +6,7 @@ import { Project } from "ts-morph";
 import {
   convertTypeToJsonSchema,
   TypeNotConvertibleError,
-} from "../json-schema";
+} from "../json-schema.js";
 
 describe("utils/json-schema", () => {
   describe("#convertTypeToJsonSchema", () => {

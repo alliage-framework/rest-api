@@ -1,6 +1,6 @@
 import { AbstractController, Post } from "@alliage/webserver";
 
-import { createHttpError } from "../../../error";
+import { createHttpError } from "../../../error.js";
 
 class CustomError extends Error {}
 

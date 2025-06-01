@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach, vi, type Mock } from "vitest";
 import {
   REQUEST_PHASE,
   AbstractResponse,
@@ -5,21 +6,21 @@ import {
   Context,
 } from "@alliage/webserver";
 
-import { SchemaMiddleware } from "../schema-middleware";
-import { SchemaGenerator } from "../../service";
+import { SchemaMiddleware } from "../schema-middleware.js";
+import { SchemaGenerator } from "../../service/schema-generator.js";
 
 function createDummyResponse() {
   const response = {
-    setStatus: jest.fn().mockImplementation(() => response),
-    setBody: jest.fn().mockImplementation(() => response),
-    end: jest.fn().mockImplementation(() => response),
+    setStatus: vi.fn().mockImplementation(() => response),
+    setBody: vi.fn().mockImplementation(() => response),
+    end: vi.fn().mockImplementation(() => response),
   } as unknown as AbstractResponse;
   return response;
 }
 
 function createDummyRequest() {
   const request = {
-    getPath: jest.fn(),
+    getPath: vi.fn(),
   } as unknown as AbstractRequest;
   return request;
 }
@@ -27,7 +28,7 @@ function createDummyRequest() {
 describe("middleware/schema-middleware", () => {
   describe("SchemaMiddleware", () => {
     const dummySchemaGenerator = {
-      getSchema: jest.fn(),
+      getSchema: vi.fn(),
     } as unknown as SchemaGenerator;
     const middleware = new SchemaMiddleware(dummySchemaGenerator, {
       enable: true,
@@ -46,12 +47,12 @@ describe("middleware/schema-middleware", () => {
       const context = new Context(dummyRequest, dummyResponse, "express");
 
       beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
       });
 
       it("should return the schema", async () => {
-        (dummyRequest.getPath as jest.Mock).mockReturnValueOnce("/api/specs");
-        (dummySchemaGenerator.getSchema as jest.Mock).mockResolvedValueOnce({
+        (dummyRequest.getPath as Mock).mockReturnValueOnce("/api/specs");
+        (dummySchemaGenerator.getSchema as Mock).mockResolvedValueOnce({
           test: "DUMMY_SCHEMA",
         });
         await middleware.apply(context);
@@ -64,7 +65,7 @@ describe("middleware/schema-middleware", () => {
       });
 
       it("should not return the schema if the configuration disables it", async () => {
-        (dummyRequest.getPath as jest.Mock).mockReturnValueOnce("/api/specs");
+        (dummyRequest.getPath as Mock).mockReturnValueOnce("/api/specs");
         const disabledMiddleware = new SchemaMiddleware(
           dummySchemaGenerator,
           // The schema is disabled
@@ -78,7 +79,7 @@ describe("middleware/schema-middleware", () => {
       });
 
       it("should not return the schema if the path doesn't match", async () => {
-        (dummyRequest.getPath as jest.Mock).mockReturnValueOnce(
+        (dummyRequest.getPath as Mock).mockReturnValueOnce(
           "/api/other/path"
         );
         await middleware.apply(context);

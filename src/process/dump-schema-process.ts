@@ -1,6 +1,6 @@
 import { AbstractProcess } from "@alliage/process-manager";
 
-import { SchemaGenerator } from "../service/schema-generator";
+import { SchemaGenerator } from "../service/schema-generator.js";
 
 export class DumpSchemaProcess extends AbstractProcess {
   constructor(private schemaGenerator: SchemaGenerator) {

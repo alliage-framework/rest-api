@@ -37,7 +37,7 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Run integration tests
         if: inputs.skipTests == false
-        run: yarn test:integration --forceExit
+        run: yarn test:integration
       - name: Create build archive
         run: |
           mkdir artifacts

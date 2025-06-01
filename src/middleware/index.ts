@@ -1,3 +1,3 @@
-export * from "./error-middleware";
-export * from "./json-parser-middleware";
-export * from "./schema-middleware";
+export * from "./error-middleware.js";
+export * from "./json-parser-middleware.js";
+export * from "./schema-middleware.js";

@@ -1,18 +1,19 @@
-import { DumpSchemaProcess } from "../dump-schema-process";
-import { SchemaGenerator } from "../../service/schema-generator";
+import { describe, it, expect, afterEach, vi, type Mock } from "vitest";
+import { DumpSchemaProcess } from "../dump-schema-process.js";
+import { SchemaGenerator } from "../../service/schema-generator.js";
 
 describe("process/dump-schema-process", () => {
   describe("DumpSchemaProcess", () => {
     const schemaGeneratorMock = {
-      loadMetadata: jest.fn(),
-      getSchema: jest.fn(),
+      loadMetadata: vi.fn(),
+      getSchema: vi.fn(),
     } as unknown as SchemaGenerator;
 
     const dumpSchemaProcess = new DumpSchemaProcess(schemaGeneratorMock);
 
     afterEach(() => {
-      jest.restoreAllMocks();
-      jest.resetAllMocks();
+      vi.restoreAllMocks();
+      vi.resetAllMocks();
     });
 
     describe("#getName", () => {
@@ -23,14 +24,14 @@ describe("process/dump-schema-process", () => {
 
     describe("#execute", () => {
       it("should load the metadata and output the schema", async () => {
-        (schemaGeneratorMock.loadMetadata as jest.Mock).mockResolvedValueOnce(
+        (schemaGeneratorMock.loadMetadata as Mock).mockResolvedValueOnce(
           undefined
         );
-        (schemaGeneratorMock.getSchema as jest.Mock).mockResolvedValueOnce({
+        (schemaGeneratorMock.getSchema as Mock).mockResolvedValueOnce({
           test: "DUMMY_SCHEMA",
         });
 
-        const writeMock = jest.spyOn(process.stdout, "write");
+        const writeMock = vi.spyOn(process.stdout, "write");
         const res = await dumpSchemaProcess.execute();
 
         expect(schemaGeneratorMock.loadMetadata).toHaveBeenCalled();

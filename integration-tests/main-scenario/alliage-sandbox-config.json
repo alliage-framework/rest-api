@@ -1,9 +1,10 @@
 {
-  "command": "ts-node -P <projectRoot>/tsconfig.json",
+  "command": "tsx",
   "copyFiles": [
     "<scenarioRoot>/src",
     "<scenarioRoot>/config",
-    "<projectRoot>/tsconfig.json"
+    "<scenarioRoot>/tsconfig.json",
+    "<projectRoot>/package.json"
   ],
   "linkModules": {
     "@alliage/rest-api": "<projectRoot>"

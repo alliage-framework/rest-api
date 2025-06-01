@@ -1,8 +1,9 @@
+import { describe, it, expect } from "vitest";
 import path from "path";
 import fs from "fs";
 
-import { MetadataManager } from "../../service/metadata-manager";
-import { GenerateSchemaProcess } from "../../process/generate-schema-process";
+import { MetadataManager } from "../../service/metadata-manager.js";
+import { GenerateSchemaProcess } from "../../process/generate-schema-process.js";
 
 const METADATA_PATH = `/tmp/${path.basename(__filename)}.metadata.json`;
 
@@ -50,6 +51,8 @@ describe("process/generate-schema-process", () => {
                 },
                 controllerName: "Test1Controller",
                 defaultStatusCode: 200,
+                summary: "Test1 Controller summary",
+                tags: ["user", "age"],
                 description: "Test1 Controller description",
                 returnDescription: "Test1 Controller return description",
                 errors: [
@@ -97,7 +100,7 @@ describe("process/generate-schema-process", () => {
                 validateOutput: true,
               },
               path: "/api/check-age",
-              pattern: "/^\\/api\\/check-age[\\/#\\?]?$/i",
+              pattern: "/^(?:\\/api\\/check-age)(?:\\/$)?$/i",
             },
           ],
         });

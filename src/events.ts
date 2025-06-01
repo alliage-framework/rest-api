@@ -1,9 +1,9 @@
 import { AbstractEvent, AbstractWritableEvent } from "@alliage/lifecycle";
 import { AbstractRequest, AbstractResponse } from "@alliage/webserver";
 
-import { ActionMetadata, Metadata } from "./service/metadata-manager";
-import { ValidationErrors } from "./service/validator";
-import { Config as OpenApiSpecs } from "./config/openapi-specs";
+import { ActionMetadata, Metadata } from "./service/metadata-manager.js";
+import { ValidationErrors } from "./service/validator.js";
+import { Config as OpenApiSpecs } from "./config/openapi-specs.js";
 
 export enum REST_API_EVENTS {
   PRE_VALIDATE_REQUEST = "@rest-api/REST_API_EVENTS/PRE_VALIDATE_REQUEST",
