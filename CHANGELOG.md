@@ -1,3 +1,10 @@
+# [1.0.0-beta.12](https://github.com/alliage-framework/rest-api/compare/v1.0.0-beta.11...v1.0.0-beta.12) (2025-06-04)
+
+
+### Features
+
+* fix pipeline ([1a3e403](https://github.com/alliage-framework/rest-api/commit/1a3e40390814cedc4682443527c802efab00f67f))
+
 # [1.0.0-beta.11](https://github.com/alliage-framework/rest-api/compare/v1.0.0-beta.10...v1.0.0-beta.11) (2025-02-26)
 
 
