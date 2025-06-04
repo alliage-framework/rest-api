@@ -40,7 +40,8 @@ export function getFileData(symbol: TSSymbol): FileData {
       filepath: file.getFilePath(),
       position: file.getLineAndColumnAtPos(node.getPos()),
     };
-  } catch (e) /* istanbul ignore next */ {
+    /* v8 ignore next 10 */
+  } catch (_e) {
     return {
       filepath: "unknown",
       position: {
@@ -57,7 +58,7 @@ function tryOrReturn<FuncReturn, FallbackReturn>(
 ): FuncReturn | FallbackReturn {
   try {
     return f();
-  } catch (e) {
+  } catch (_e) {
     return fallback;
   }
 }
@@ -212,7 +213,7 @@ function convertObjectTypeToJsonSchema(
         return acc;
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+       
       let type = property.getTypeAtLocation(
         t.getSymbolOrThrow().getDeclarations()[0]
       );

@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach, vi, type Mock } from "vitest";
 import { Readable } from "stream";
 
 import {
@@ -7,8 +8,8 @@ import {
   Context,
 } from "@alliage/webserver";
 
-import { JSONParserMiddleware } from "../json-parser-middleware";
-import { HttpError } from "../../error";
+import { JSONParserMiddleware } from "../json-parser-middleware.js";
+import { HttpError } from "../../error.js";
 
 function createDummyResponse() {
   const response = {} as unknown as AbstractResponse;
@@ -24,9 +25,9 @@ function resetReadable() {
 
 function createDummyRequest() {
   const request = {
-    setBody: jest.fn().mockImplementation(() => request),
-    getHeader: jest.fn(),
-    getReadableStream: jest.fn().mockImplementation(() => readable),
+    setBody: vi.fn().mockImplementation(() => request),
+    getHeader: vi.fn(),
+    getReadableStream: vi.fn().mockImplementation(() => readable),
   } as unknown as AbstractRequest;
   return request;
 }
@@ -47,14 +48,14 @@ describe("middleware/json-parser-middleware", () => {
       const context = new Context(dummyRequest, dummyResponse, "express");
 
       beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         resetReadable();
       });
 
       it('should transform the body when the Content-Type is "application/json"', async () => {
         dummyRequest.getReadableStream().push('{"foo":"bar"}');
         dummyRequest.getReadableStream().push(null);
-        (dummyRequest.getHeader as jest.Mock).mockReturnValue(
+        (dummyRequest.getHeader as Mock).mockReturnValue(
           "application/json"
         );
 
@@ -66,7 +67,7 @@ describe("middleware/json-parser-middleware", () => {
       it('should not transform the body when the Content-Type is not "application/json"', async () => {
         dummyRequest.getReadableStream().push("<test></test>");
         dummyRequest.getReadableStream().push(null);
-        (dummyRequest.getHeader as jest.Mock).mockReturnValue(
+        (dummyRequest.getHeader as Mock).mockReturnValue(
           "application/xml"
         );
 
@@ -78,7 +79,7 @@ describe("middleware/json-parser-middleware", () => {
       it("should throw a 400 error when the JSON is not valid", async () => {
         dummyRequest.getReadableStream().push("<test></test>");
         dummyRequest.getReadableStream().push(null);
-        (dummyRequest.getHeader as jest.Mock).mockReturnValue(
+        (dummyRequest.getHeader as Mock).mockReturnValue(
           "application/json"
         );
 
@@ -99,7 +100,7 @@ describe("middleware/json-parser-middleware", () => {
       it("should throw an error if the stream returns an error", async () => {
         const thrownError = new Error("test");
         dummyRequest.getReadableStream().push('{"foor": "bar"}');
-        (dummyRequest.getHeader as jest.Mock).mockReturnValue(
+        (dummyRequest.getHeader as Mock).mockReturnValue(
           "application/json"
         );
 

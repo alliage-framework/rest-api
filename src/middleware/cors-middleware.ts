@@ -1,7 +1,7 @@
 import { REQUEST_PHASE, AbstractMiddleware, Context } from "@alliage/webserver";
 
-import { Config } from "../config/main";
-import { addAccessControlHeaders } from "../utils/http";
+import { Config } from "../config/main.js";
+import { addAccessControlHeaders } from "../utils/http.js";
 
 /**
  * Add the CORS headers in the response

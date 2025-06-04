@@ -1,4 +1,5 @@
-import { createHttpError, HttpError } from "../error";
+import { describe, it, expect } from "vitest";
+import { createHttpError, HttpError } from "../error.js";
 
 describe("error", () => {
   describe("createHttpError", () => {

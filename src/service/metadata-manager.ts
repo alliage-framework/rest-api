@@ -1,8 +1,9 @@
-import path from "path";
+import { resolve, dirname } from "path";
 import fs from "fs/promises";
+import { createRequire } from "module";
 
 import { parse } from "comment-parser";
-import { pathToRegexp, parse as parsePath } from "path-to-regexp";
+import { pathToRegexp, parse as parsePath, Token } from "path-to-regexp";
 import {
   ClassDeclaration,
   Decorator,
@@ -21,8 +22,9 @@ import {
   FileData,
   convertTypeToJsonSchema,
   getFileData,
-} from "../utils/json-schema";
+} from "../utils/json-schema.js";
 
+const require = createRequire(import.meta.url);
 const PATTERN_REGEXP = /^\/(.*)\/([dgimsuy]+)$/;
 
 export type ControllerMetadata = Exclude<
@@ -79,7 +81,7 @@ export class MetadataManager {
    */
   async generateMetadata() {
     const project = new Project({
-      tsConfigFilePath: path.resolve(this.tsConfigPath),
+      tsConfigFilePath: resolve(this.tsConfigPath),
     });
 
     const files = project.getSourceFiles(this.sources);
@@ -92,15 +94,8 @@ export class MetadataManager {
         routes.forEach((route) => {
           m[route.method] = m[route.method] ?? [];
           m[route.method].push({
-            pattern: pathToRegexp(route.path).toString(),
-            path: parsePath(route.path)
-              .map((token) => {
-                if (typeof token === "string") {
-                  return token;
-                }
-                return `${token.prefix}{${token.name}}${token.suffix}`;
-              })
-              .join(""),
+            pattern: pathToRegexp(route.path).regexp.toString(),
+            path: this._convertTokensToPath(parsePath(route.path).tokens),
             actionMetadata: {
               controllerName: cm.name,
               ...action,
@@ -145,16 +140,51 @@ export class MetadataManager {
     }
     return this.metadata;
   }
+
+  private _convertTokensToPath(tokens: Token[]): string {
+    return tokens
+      .map((token) => {
+        if (token.type === "text") {
+          return token.value;
+        }
+        if (token.type === "param") {
+          return `{${token.name}}`;
+          /* v8 ignore next 8 */
+        }
+        if (token.type === "wildcard") {
+          return `{${token.name}}`;
+        }
+        if (token.type === "group") {
+          return this._convertTokensToPath(token.tokens);
+        }
+        return "";
+      })
+      .join("");
+  }
 }
 
-/* istanbul ignore next */
-const ALLIAGE_WEB_MODULE_PATH =
-  process.env.__ALLIAGE_WEB_MODULE_PATH__ ??
-  path.dirname(require.resolve("@alliage/webserver"));
-/* istanbul ignore next */
-const ALLIAGE_REST_API_MODULE_PATH =
-  process.env.__ALLIAGE_REST_API_MODULE_PATH__ ??
-  path.dirname(require.resolve("@alliage/rest-api"));
+/* v8 ignore next 10 */
+let _cachedAlliageWebModulePath: string | null = null;
+const ALLIAGE_WEB_MODULE_PATH = () => {
+  if (_cachedAlliageWebModulePath) {
+    return _cachedAlliageWebModulePath;
+  }
+  _cachedAlliageWebModulePath =
+    process.env.__ALLIAGE_WEB_MODULE_PATH__ ??
+    dirname(require.resolve("@alliage/webserver"));
+  return _cachedAlliageWebModulePath;
+};
+/* v8 ignore next 10 */
+let _cachedAlliageRestApiModulePath: string | null = null;
+const ALLIAGE_REST_API_MODULE_PATH = () => {
+  if (_cachedAlliageRestApiModulePath) {
+    return _cachedAlliageRestApiModulePath;
+  }
+  _cachedAlliageRestApiModulePath =
+    process.env.__ALLIAGE_REST_API_MODULE_PATH__ ??
+    dirname(require.resolve("@alliage/rest-api"));
+  return _cachedAlliageRestApiModulePath;
+};
 
 function PREPEND_PATTERN(prefix: string, pattern: RegExp) {
   return new RegExp(`${prefix}${pattern.source}`, pattern.flags);
@@ -174,6 +204,7 @@ function getRootClass(
   let defs: DefinitionInfo<ts.DefinitionInfo>[] = [];
   try {
     defs = languageService.getDefinitions(ce);
+    /* v8 ignore next 3 */
   } catch {
     return cd;
   }
@@ -193,8 +224,8 @@ function getRootClass(
 
 const ABSTRACT_CONTROLLER_NAME = "AbstractController";
 const ABSTRACT_CONTROLLER_PATH_REGEXP = PREPEND_PATTERN(
-  ALLIAGE_WEB_MODULE_PATH,
-  /\/controller\/index(\.d)?\.ts$/
+  ALLIAGE_WEB_MODULE_PATH(),
+  /\/controller\/abstract-controller(\.d)?\.ts$/
 );
 
 function isAbstractController(classDecl: ClassDeclaration) {
@@ -208,7 +239,7 @@ function isAbstractController(classDecl: ClassDeclaration) {
 
 const ABSTRACT_REQUEST_NAME = "AbstractRequest";
 const ABSTRACT_REQUEST_PATH_REGEXP = PREPEND_PATTERN(
-  ALLIAGE_WEB_MODULE_PATH,
+  ALLIAGE_WEB_MODULE_PATH(),
   /\/network\/request(\.d)?\.ts$/
 );
 
@@ -225,7 +256,7 @@ function isAbstractRequest(node: Node<ts.Node>) {
 }
 
 const DECORATORS_PATH_REGEXP = PREPEND_PATTERN(
-  ALLIAGE_WEB_MODULE_PATH,
+  ALLIAGE_WEB_MODULE_PATH(),
   /\/controller\/decorations(\.d)?\.ts$/
 );
 const ALLOWED_DECORATORS_ARGUMENT_KINDS = [
@@ -260,7 +291,7 @@ function getActionDecoratorMetadata(decorator: Decorator) {
 
 const HTTP_ERROR_NAME = "HttpError";
 const HTTP_ERROR_PATH_REGEXP = PREPEND_PATTERN(
-  ALLIAGE_REST_API_MODULE_PATH,
+  ALLIAGE_REST_API_MODULE_PATH(),
   /\/error(\.d)?\.ts$/
 );
 function getActionErrorsMetadata(
@@ -428,6 +459,8 @@ export function getControllerMetadata(file: SourceFile) {
     const defaultStatusCode = getActionDefaultStatusCode(methodDecl);
     const validateInput = getActionValidateInputFlag(methodDecl);
     const validateOutput = getActionValidateOutputFlag(methodDecl);
+    const summary = getStringJsonDocTag(methodDecl, "summary");
+    const tags = getStringJsonDocTag(methodDecl, "tags");
     const description = getStringJsonDocTag(methodDecl, "description");
     const returnDescription = getStringJsonDocTag(methodDecl, "returns");
     const operationId = getStringJsonDocTag(methodDecl, "operationId");
@@ -437,6 +470,8 @@ export function getControllerMetadata(file: SourceFile) {
         name: methodDecl.getName(),
         operationId,
         description,
+        summary,
+        tags: tags ? tags.split(",").map((t) => t.trim()) : [],
         returnDescription,
         defaultStatusCode,
         validateInput,

@@ -1,7 +1,7 @@
 import { REQUEST_PHASE, AbstractMiddleware, Context } from "@alliage/webserver";
 
-import { Config } from "../config/main";
-import { SchemaGenerator } from "../service/schema-generator";
+import { Config } from "../config/main.js";
+import { SchemaGenerator } from "../service/schema-generator.js";
 
 /**
  * Exposes the OpenAPI schema endpoint

@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import {
   REQUEST_PHASE,
   AbstractRequest,
@@ -5,11 +6,11 @@ import {
   Context,
 } from "@alliage/webserver";
 
-import { CORSMiddleware } from "../cors-middleware";
+import { CORSMiddleware } from "../cors-middleware.js";
 
 function createDummyResponse() {
   const response = {
-    setHeader: jest.fn(),
+    setHeader: vi.fn(),
   } as unknown as AbstractResponse;
   return response;
 }
@@ -39,7 +40,7 @@ describe("middleware/cors-middleware", () => {
 
     describe("#apply", () => {
       beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
       });
 
       it("should apply the CORS headers when there's a configuration for the given origin", async () => {

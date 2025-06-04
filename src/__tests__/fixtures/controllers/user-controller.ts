@@ -7,7 +7,7 @@ import {
   AbstractRequest,
 } from "@alliage/webserver";
 
-import { createHttpError } from "../../../error";
+import { createHttpError } from "../../../error.js";
 
 interface User {
   id: number;

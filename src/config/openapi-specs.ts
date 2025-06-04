@@ -1,17 +1,8 @@
-import cloneDeep from "lodash.clonedeep";
-
-import openapiSchema from "../generated/schemas/v3.0";
-import { HttpsSpecOpenapisOrgOas30SchemaWORKINPROGRESS } from "../generated/schemas/v3.0.d";
+import { OpenAPIV31 } from "../generated/schemas/v3.1.js";
+import openapiSchema from "../generated/schemas/v3.1.json" with { type: "json" };
 
 export const CONFIG_NAME = "rest-api-openapi-specs";
 
-// Fix schema to make it work with AJV
-export const schema = cloneDeep(openapiSchema);
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-ignore
-schema.$schema = undefined;
-// @ts-ignore
-schema.definitions.Schema.properties.multipleOf.exclusiveMinimum = 0;
-/* eslint-enable @typescript-eslint/ban-ts-comment */
+export const schema = openapiSchema;
 
-export type Config = HttpsSpecOpenapisOrgOas30SchemaWORKINPROGRESS;
+export type Config = OpenAPIV31;

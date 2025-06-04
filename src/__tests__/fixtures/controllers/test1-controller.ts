@@ -1,7 +1,7 @@
 import { Service } from "@alliage/service-loader";
 import { AbstractController, Post, AbstractRequest } from "@alliage/webserver";
 
-import { createHttpError } from "../../../error";
+import { createHttpError } from "../../../error.js";
 
 type Body = {
   age: number;
@@ -15,6 +15,8 @@ type Query = {
 export default class Test1Controller extends AbstractController {
   /**
    * @description Test1 Controller description
+   * @summary Test1 Controller summary
+   * @tags user, age
    * @returns Test1 Controller return description
    */
   @Post("/api/check-age")

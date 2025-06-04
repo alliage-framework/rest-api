@@ -1,15 +1,16 @@
+import { describe, it, expect, beforeAll, beforeEach, vi } from "vitest";
 import path from "path";
 
 import { EventManager } from "@alliage/lifecycle";
 
-import { MetadataManager } from "../../service/metadata-manager";
-import { Config as OpenApiSpecs } from "../../config/openapi-specs";
+import { MetadataManager } from "../../service/metadata-manager.js";
+import { Config as OpenApiSpecs } from "../../config/openapi-specs.js";
 import {
   RestAPIPostGenerateSchemaEvent,
   RestAPIPreGenerateSchemaEvent,
   REST_API_EVENTS,
-} from "../../events";
-import { SchemaGenerator } from "../schema-generator";
+} from "../../events.js";
+import { SchemaGenerator } from "../schema-generator.js";
 
 describe("service/schema-generator", () => {
   describe("SchemaMiddleware", () => {
@@ -41,7 +42,7 @@ describe("service/schema-generator", () => {
 
     describe("#loadMetadata", () => {
       it("should load the metadata from the MetadataManager", async () => {
-        const loadMetadataSpy = jest
+        const loadMetadataSpy = vi
           .spyOn(metadataManager, "loadMetadata")
           .mockResolvedValueOnce(undefined);
 
@@ -59,7 +60,7 @@ describe("service/schema-generator", () => {
       });
 
       beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
       });
 
       it("should return the schema", async () => {
@@ -73,6 +74,8 @@ describe("service/schema-generator", () => {
             "/api/check-age": {
               post: {
                 description: "Test1 Controller description",
+                summary: "Test1 Controller summary",
+                tags: ["user", "age"],
                 operationId: "checkAge",
                 parameters: [
                   {
@@ -145,6 +148,8 @@ describe("service/schema-generator", () => {
             "/api/hello/{name}": {
               get: {
                 description: "Test2 Controller description",
+                summary: undefined,
+                tags: [],
                 operationId: "sayHello",
                 parameters: [
                   {
@@ -209,6 +214,8 @@ describe("service/schema-generator", () => {
             "/api/hierarchy": {
               post: {
                 description: undefined,
+                summary: undefined,
+                tags: [],
                 operationId: "getHierarchyDetails",
                 parameters: [],
                 requestBody: {
@@ -267,8 +274,8 @@ describe("service/schema-generator", () => {
           openApiSpecs
         );
 
-        const preGenerateSchemaEventHandler = jest.fn();
-        const postGenerateSchemaEventHandler = jest.fn();
+        const preGenerateSchemaEventHandler = vi.fn();
+        const postGenerateSchemaEventHandler = vi.fn();
         eventManager.on(
           REST_API_EVENTS.PRE_GENERATE_SCHEMA,
           preGenerateSchemaEventHandler
@@ -288,6 +295,8 @@ describe("service/schema-generator", () => {
                     actionMetadata: {
                       bodyType: {},
                       controllerName: "Test2Controller",
+                      summary: undefined,
+                      tags: [],
                       defaultStatusCode: 200,
                       description: "Test2 Controller description",
                       returnDescription: "Test2 Controller return description",
@@ -345,7 +354,7 @@ describe("service/schema-generator", () => {
                     },
                     path: "/api/hello/{name}",
                     pattern:
-                      "/^\\/api\\/hello(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$/i",
+                      "/^(?:\\/api\\/hello\\/([^\\/]+))(?:\\/$)?$/i",
                   },
                 ],
                 post: [
@@ -362,6 +371,8 @@ describe("service/schema-generator", () => {
                         type: "object",
                       },
                       controllerName: "Test1Controller",
+                      summary: "Test1 Controller summary",
+                      tags: ["user", "age"],
                       defaultStatusCode: 200,
                       description: "Test1 Controller description",
                       returnDescription: "Test1 Controller return description",
@@ -411,7 +422,7 @@ describe("service/schema-generator", () => {
                       validateOutput: true,
                     },
                     path: "/api/check-age",
-                    pattern: "/^\\/api\\/check-age[\\/#\\?]?$/i",
+                    pattern: "/^(?:\\/api\\/check-age)(?:\\/$)?$/i",
                   },
                   {
                     actionMetadata: {
@@ -442,6 +453,8 @@ describe("service/schema-generator", () => {
                         type: "object",
                       },
                       controllerName: "Test3Controller",
+                      summary: undefined,
+                      tags: [],
                       defaultStatusCode: 204,
                       errors: [
                         {
@@ -466,7 +479,7 @@ describe("service/schema-generator", () => {
                       validateOutput: true,
                     },
                     path: "/api/hierarchy",
-                    pattern: "/^\\/api\\/hierarchy[\\/#\\?]?$/i",
+                    pattern: "/^(?:\\/api\\/hierarchy)(?:\\/$)?$/i",
                   },
                 ],
               });
@@ -476,6 +489,8 @@ describe("service/schema-generator", () => {
                     actionMetadata: {
                       bodyType: {},
                       controllerName: "TestXController",
+                      summary: undefined,
+                      tags: [],
                       defaultStatusCode: 200,
                       errors: [],
                       name: "actionY",
@@ -514,6 +529,8 @@ describe("service/schema-generator", () => {
                     actionMetadata: {
                       bodyType: {},
                       controllerName: "TestXController",
+                      summary: undefined,
+                      tags: [],
                       defaultStatusCode: 200,
                       description: "TestX Controller description",
                       returnDescription: "TestX Controller return description",
@@ -549,6 +566,8 @@ describe("service/schema-generator", () => {
                   "/api/x/y": {
                     get: {
                       description: "TestX Controller description",
+                      summary: undefined,
+                      tags: [],
                       operationId: "actionY",
                       parameters: [],
                       requestBody: undefined,
@@ -599,6 +618,8 @@ describe("service/schema-generator", () => {
               "/api/x/y": {
                 get: {
                   description: "TestX Controller description",
+                  summary: undefined,
+                  tags: [],
                   operationId: "actionY",
                   parameters: [],
                   requestBody: undefined,

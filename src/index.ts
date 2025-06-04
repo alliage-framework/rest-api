@@ -23,17 +23,17 @@ import {
   CONFIG_NAME as MAIN_CONFIG_NAME,
   Config as MainConfig,
   schema as mainSchema,
-} from "./config/main";
+} from "./config/main.js";
 import {
   CONFIG_NAME as OPENAPI_SPECS_CONFIG_NAME,
   schema as openapiSpecsSchema,
-} from "./config/openapi-specs";
-import { createHttpError } from "./error";
-import { ErrorMiddleware } from "./middleware/error-middleware";
-import { JSONParserMiddleware } from "./middleware/json-parser-middleware";
-import { ActionMetadata, MetadataManager } from "./service/metadata-manager";
-import { SchemaGenerator } from "./service/schema-generator";
-import { Validator } from "./service/validator";
+} from "./config/openapi-specs.js";
+import { createHttpError } from "./error.js";
+import { ErrorMiddleware } from "./middleware/error-middleware.js";
+import { JSONParserMiddleware } from "./middleware/json-parser-middleware.js";
+import { ActionMetadata, MetadataManager } from "./service/metadata-manager.js";
+import { SchemaGenerator } from "./service/schema-generator.js";
+import { Validator } from "./service/validator.js";
 import {
   RestAPIInvalidRequestEvent,
   RestAPIInvalidResponseEvent,
@@ -41,13 +41,13 @@ import {
   RestAPIPostValidateResponseEvent,
   RestAPIPreValidateRequestEvent,
   RestAPIPreValidateResponseEvent,
-} from "./events";
-import { GenerateSchemaProcess } from "./process/generate-schema-process";
-import { DumpSchemaProcess } from "./process/dump-schema-process";
-import { SchemaMiddleware } from "./middleware/schema-middleware";
-import { GenerateSchemaTask } from "./task/generate-schema-task";
-import { addAccessControlHeaders } from "./utils/http";
-import { CORSMiddleware } from "./middleware/cors-middleware";
+} from "./events.js";
+import { GenerateSchemaProcess } from "./process/generate-schema-process.js";
+import { DumpSchemaProcess } from "./process/dump-schema-process.js";
+import { SchemaMiddleware } from "./middleware/schema-middleware.js";
+import { GenerateSchemaTask } from "./task/generate-schema-task.js";
+import { addAccessControlHeaders } from "./utils/http.js";
+import { CORSMiddleware } from "./middleware/cors-middleware.js";
 
 export default class AlliageRestAPIModule extends AbstractLifeCycleAwareModule {
   private metadataManager!: MetadataManager;
@@ -130,11 +130,11 @@ export default class AlliageRestAPIModule extends AbstractLifeCycleAwareModule {
 
     const request = event.getRequest();
     const metadata = this.getRequestMetadata(request);
-
+    
     if (!metadata || !metadata.validateInput) {
       return;
     }
-
+    
     const preValidateRequestEvent = new RestAPIPreValidateRequestEvent(
       metadata,
       request
@@ -240,7 +240,7 @@ export default class AlliageRestAPIModule extends AbstractLifeCycleAwareModule {
    */
   private getRequestMetadata(request: AbstractRequest) {
     if (this.requestMetadataMap.has(request)) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+       
       return this.requestMetadataMap.get(request)!;
     }
     const metadata = this.metadataManager.findMetadata(
@@ -309,9 +309,9 @@ export default class AlliageRestAPIModule extends AbstractLifeCycleAwareModule {
   }
 }
 
-export * from "./events";
-export * from "./error";
-export * from "./middleware";
-export * from "./process";
-export * from "./service";
-export * from "./task";
+export * from "./events.js";
+export * from "./error.js";
+export * from "./middleware/index.js";
+export * from "./process/index.js";
+export * from "./service/index.js";
+export * from "./task/index.js";

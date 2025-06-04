@@ -1,12 +1,12 @@
 import { EventManager } from "@alliage/lifecycle";
 
-import { Config as OpenApiSpecs } from "../config/openapi-specs";
+import { Config as OpenApiSpecs } from "../config/openapi-specs.js";
 import {
   RestAPIPostGenerateSchemaEvent,
   RestAPIPreGenerateSchemaEvent,
-} from "../events";
+} from "../events.js";
 
-import { MetadataManager } from "./metadata-manager";
+import { MetadataManager } from "./metadata-manager.js";
 
 const REF_REGEXP = /^#(\/.*)$/;
 
@@ -51,6 +51,8 @@ export class SchemaGenerator {
               [method.toLowerCase()]: {
                 operationId: actionMetadata.operationId ?? actionMetadata.name,
                 description: actionMetadata.description,
+                summary: actionMetadata.summary,
+                tags: actionMetadata.tags,
                 parameters: [
                   ...Object.entries(params.properties ?? {}).map(
                     ([name, schema]) => ({
@@ -146,7 +148,7 @@ export class SchemaGenerator {
           value = `#/${path
             .slice(0, schemaPos + 1)
             .map((p) => p.replace(/~/g, "~0").replace(/\//g, "~1"))
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+             
             .join("/")}${match![1]}`;
         }
         return {

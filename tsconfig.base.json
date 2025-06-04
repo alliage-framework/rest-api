@@ -23,6 +23,6 @@
     "moduleResolution": "nodenext",
     "esModuleInterop": true,
     /* Advanced Options */
-    "resolveJsonModule": true,
-  },
+    "resolveJsonModule": true
+  }
 }

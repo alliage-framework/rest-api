@@ -1,10 +1,11 @@
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { AbstractRequest, AbstractResponse } from "@alliage/webserver";
 
-import { addAccessControlHeaders } from "../http";
+import { addAccessControlHeaders } from "../http.js";
 
 function createDummyResponse() {
   const response = {
-    setHeader: jest.fn(),
+    setHeader: vi.fn(),
   } as unknown as AbstractResponse;
   return response;
 }
@@ -21,7 +22,7 @@ function createDummyRequest(origin: string, method: string) {
 describe("utils/http", () => {
   describe("#addAccessControlHEaders", () => {
     beforeEach(() => {
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     it("should add the Access-Control-Allow-Origin for normal requests", () => {

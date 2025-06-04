@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { EventManager } from "@alliage/lifecycle";
 import {
   REQUEST_PHASE,
@@ -6,19 +7,19 @@ import {
   Context,
 } from "@alliage/webserver";
 
-import { HttpError } from "../../error";
+import { HttpError } from "../../error.js";
 import {
   RestAPIPostErrorEvent,
   RestAPIPreErrorEvent,
   REST_API_EVENTS,
-} from "../../events";
-import { ErrorMiddleware } from "../error-middleware";
+} from "../../events.js";
+import { ErrorMiddleware } from "../error-middleware.js";
 
 function createDummyResponse() {
   const response = {
-    setStatus: jest.fn().mockImplementation(() => response),
-    setBody: jest.fn().mockImplementation(() => response),
-    end: jest.fn().mockImplementation(() => response),
+    setStatus: vi.fn().mockImplementation(() => response),
+    setBody: vi.fn().mockImplementation(() => response),
+    end: vi.fn().mockImplementation(() => response),
   } as unknown as AbstractResponse;
   return response;
 }
@@ -42,7 +43,7 @@ describe("middleware/error-middleware", () => {
       const context = new Context(request, response, "express");
 
       beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
       });
 
       it("should set the status to 500 if the error is not an HttpError", async () => {

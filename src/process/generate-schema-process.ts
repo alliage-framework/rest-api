@@ -1,6 +1,6 @@
 import { AbstractProcess } from "@alliage/process-manager";
 
-import { MetadataManager } from "../service/metadata-manager";
+import { MetadataManager } from "../service/metadata-manager.js";
 
 export class GenerateSchemaProcess extends AbstractProcess {
   constructor(private metadataManager: MetadataManager) {

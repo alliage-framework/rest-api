@@ -1,6 +1,6 @@
 import { AbstractTask } from "@alliage/builder";
 
-import { MetadataManager } from "../service/metadata-manager";
+import { MetadataManager } from "../service/metadata-manager.js";
 
 export class GenerateSchemaTask extends AbstractTask {
   private metadataManager: MetadataManager;

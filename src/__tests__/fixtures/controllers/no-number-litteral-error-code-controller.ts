@@ -1,6 +1,6 @@
 import { AbstractController, Get } from "@alliage/webserver";
 
-import { createHttpError } from "../../../error";
+import { createHttpError } from "../../../error.js";
 
 export default class NoNumberLitteralErrorCodeController extends AbstractController {
   @Get("/api/get-action")

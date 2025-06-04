@@ -1,3 +1,3 @@
-export * from "./metadata-manager";
-export * from "./validator";
-export * from "./schema-generator";
+export * from "./metadata-manager.js";
+export * from "./validator.js";
+export * from "./schema-generator.js";

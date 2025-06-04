@@ -1,7 +1,7 @@
 import { Service } from "@alliage/service-loader";
 import { AbstractController, Post, AbstractRequest } from "@alliage/webserver";
 
-import { createHttpError } from "../../../error";
+import { createHttpError } from "../../../error.js";
 
 type Employee = {
   name: string;
@@ -20,8 +20,6 @@ export default class Test3Controller extends AbstractController {
    */
   @Post("/api/hierarchy")
   public getHierarchy(request: AbstractRequest<undefined, undefined, Body>) {
-    console.log(request.getBody());
-
     throw createHttpError(401, undefined);
   }
 }
