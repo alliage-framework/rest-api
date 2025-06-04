@@ -4,6 +4,9 @@ on:
     branches:
       - main
       - beta
+env:
+  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 jobs:
   build-and-test:
     uses: ./.github/workflows/build-and-test.yml
@@ -16,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          token: ${{ secrets.GH_TOKEN }}
+          persist-credentials: false
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
@@ -25,8 +28,13 @@ jobs:
         run: |
           tar -xf build.tar.gz -C .
           rm -rf build.tar.gz
+      - name: Create GitHub App Token
+        uses: actions/create-github-app-token@v2
+        id: app-token
+        with:
+          app-id: ${{ secrets.RELEASE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.RELEASE_APP_SECRET_KEY }}
       - name: Publish
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
