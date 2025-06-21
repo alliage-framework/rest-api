@@ -1,3 +1,10 @@
+# [1.0.0-beta.13](https://github.com/alliage-framework/rest-api/compare/v1.0.0-beta.12...v1.0.0-beta.13) (2025-06-21)
+
+
+### Features
+
+* add Swagger UI ([#13](https://github.com/alliage-framework/rest-api/issues/13)) ([cbce304](https://github.com/alliage-framework/rest-api/commit/cbce30443daa63ac9e9be1ea0ff39f2507e6915c))
+
 # [1.0.0-beta.12](https://github.com/alliage-framework/rest-api/compare/v1.0.0-beta.11...v1.0.0-beta.12) (2025-06-04)
 
 
