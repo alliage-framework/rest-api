@@ -86,8 +86,14 @@ describe("Main scenario", () => {
     });
 
     it("should provide a OpenAPI spec", async () => {
-      const res = await webserverSandbox.getClient().get("/api/specs");
+      const res = await webserverSandbox.getClient().get("/api/specs/schema.json");
 
+      expect(res.status).toEqual(200);
+      expect(res.data).toMatchSnapshot();
+    });
+
+    it("should provide a Swagger UI", async () => {
+      const res = await webserverSandbox.getClient().get("/api/specs");
       expect(res.status).toEqual(200);
       expect(res.data).toMatchSnapshot();
     });

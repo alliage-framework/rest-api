@@ -3,7 +3,10 @@
     /* Basic Options */
     "target": "ESNext",
     "module": "NodeNext",
-    "lib": ["ESNext"],
+    "lib": [
+      "ESNext",
+      "dom"
+    ],
     "sourceMap": true,
     "declaration": true,
     /* Strict Type-Checking Options */
