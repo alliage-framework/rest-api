@@ -77,7 +77,13 @@ export class SchemaMiddleware extends AbstractMiddleware {
   }
 
   private async _serveSwaggerUi(routePath: string, response: AbstractResponse) {
-    const root = getAbsoluteFSPath().replace(/\/$/, "");
+    const root = getAbsoluteFSPath();
+    
+    // Handle empty path by redirecting to path with trailing slash
+    if (routePath === "") {
+      response.setStatus(301).setHeader("Location", `${this.schemaConfig.path}/`).end();
+      return;
+    }
     
     // Sanitize the route path to prevent path traversal
     const sanitizedPath = this._sanitizePath(routePath);
@@ -95,7 +101,7 @@ export class SchemaMiddleware extends AbstractMiddleware {
       return;
     }
     
-    if (filePath.endsWith("/swagger-initializer.js")) {
+    if (filePath.endsWith("swagger-initializer.js")) {
       await this._serverSwaggerInitializer(response);
       return;
     }
@@ -104,8 +110,8 @@ export class SchemaMiddleware extends AbstractMiddleware {
   }
 
   private _sanitizePath(routePath: string): string | null {
-    // Handle root paths
-    if (routePath === "" || routePath === "/") {
+    // Handle root path with trailing slash
+    if (routePath === "/") {
       return "index.html";
     }
     

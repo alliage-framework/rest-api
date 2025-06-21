@@ -86,14 +86,28 @@ describe("Main scenario", () => {
     });
 
     it("should provide a OpenAPI spec", async () => {
-      const res = await webserverSandbox.getClient().get("/api/specs/schema.json");
+      const res = await webserverSandbox
+        .getClient()
+        .get("/api/specs/schema.json");
 
       expect(res.status).toEqual(200);
       expect(res.data).toMatchSnapshot();
     });
 
+    it("should redirect to the same URL with a trailing slash", async () => {
+      const res = await webserverSandbox
+        .getClient()
+        .get("/api/specs", { maxRedirects: 0, validateStatus: () => true });
+      expect(res.status).toEqual(301);
+      expect(res.headers).toEqual(
+        expect.objectContaining({
+          location: "/api/specs/",
+        })
+      );
+    });
+
     it("should provide a Swagger UI", async () => {
-      const res = await webserverSandbox.getClient().get("/api/specs");
+      const res = await webserverSandbox.getClient().get("/api/specs/");
       expect(res.status).toEqual(200);
       expect(res.data).toMatchSnapshot();
     });
