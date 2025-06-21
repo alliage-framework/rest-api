@@ -170,27 +170,20 @@ describe("middleware/schema-middleware", () => {
         expect(dummyResponse.end).toHaveBeenCalled();
       });
 
-      it("should serve swagger-ui root path as index.html", async () => {
+      it("should redirect swagger-ui root path to path with trailing slash", async () => {
         const { getAbsoluteFSPath } = await import("swagger-ui-dist");
-        const { access, open, stat } = await import("fs/promises");
-        const path = await import("path");
         
         (getAbsoluteFSPath as Mock).mockReturnValue("/mock/swagger-ui/dist/");
         (dummyRequest.getPath as Mock).mockReturnValueOnce("/api/specs");
-        (access as Mock).mockResolvedValueOnce(undefined);
-        (path.default.extname as Mock).mockReturnValue(".html");
-        (path.default.resolve as Mock).mockReturnValue("/mock/swagger-ui/dist/index.html");
-        (path.default.relative as Mock).mockReturnValue("index.html");
-        (path.default.isAbsolute as Mock).mockReturnValue(false);
-        
-        const mockFile = createMockFile();
-        (stat as Mock).mockResolvedValueOnce(mockFile.stats);
-        (open as Mock).mockResolvedValueOnce(mockFile);
 
         await middleware.apply(context);
 
-        expect(path.default.resolve).toHaveBeenCalledWith("/mock/swagger-ui/dist", "index.html");
+        expect(dummyResponse.setStatus).toHaveBeenCalledWith(301);
+        expect(dummyResponse.setHeader).toHaveBeenCalledWith("Location", "/api/specs/");
+        expect(dummyResponse.end).toHaveBeenCalled();
       });
+
+
 
       it("should serve swagger-ui root path with trailing slash as index.html", async () => {
         const { getAbsoluteFSPath } = await import("swagger-ui-dist");
@@ -211,7 +204,7 @@ describe("middleware/schema-middleware", () => {
 
         await middleware.apply(context);
 
-        expect(path.default.resolve).toHaveBeenCalledWith("/mock/swagger-ui/dist", "index.html");
+        expect(path.default.resolve).toHaveBeenCalledWith("/mock/swagger-ui/dist/", "index.html");
       });
 
       it("should serve swagger-initializer.js with custom content and security headers", async () => {
@@ -516,7 +509,7 @@ describe("middleware/schema-middleware", () => {
 
         await middleware.apply(context);
 
-        expect(path.default.resolve).toHaveBeenCalledWith("/mock/swagger-ui/dist", "test.html");
+        expect(path.default.resolve).toHaveBeenCalledWith("/mock/swagger-ui/dist/", "test.html");
         expect(dummyResponse.setHeader).toHaveBeenCalledWith("Content-Type", "text/html");
         expect(dummyResponse.end).toHaveBeenCalled();
       });
