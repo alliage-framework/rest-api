@@ -1,3 +1,10 @@
+# [1.0.0-beta.14](https://github.com/alliage-framework/rest-api/compare/v1.0.0-beta.13...v1.0.0-beta.14) (2025-06-21)
+
+
+### Bug Fixes
+
+* **swagger-ui:** redirect when no trailing slash ([#14](https://github.com/alliage-framework/rest-api/issues/14)) ([b56bfd8](https://github.com/alliage-framework/rest-api/commit/b56bfd890c8a3a8f6845f30860f07731ea12a061))
+
 # [1.0.0-beta.13](https://github.com/alliage-framework/rest-api/compare/v1.0.0-beta.12...v1.0.0-beta.13) (2025-06-21)
 
 
